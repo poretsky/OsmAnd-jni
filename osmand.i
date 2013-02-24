@@ -21,7 +21,8 @@ namespace std {
 #include <QStringList>
 #include <Inspector.h>
 #include <ObfReader.h>
-
+#include <ObfSection.h>
+#include <Utilities.h>
 
 class ObfInspector {
 public:
@@ -42,17 +43,20 @@ public:
 	}
 };
 %}
+
 class ObfInspector {
 public:
 	static int ObfInspector::inspector(std::vector<std::string> argv) ;
 };
 
-/*
 namespace OsmAnd {
-
-class ObfSection {
+%nodefaultctor ObfSection;
+struct ObfSection {
+	QString _name;
+    uint32_t _length;
+    uint32_t _offset;
 };
-
+%nodefaultctor ObfReader;
 class ObfReader {
 public :
 	int getVersion();
@@ -61,16 +65,16 @@ public :
 
 }
 
-
-int OsmAnd::Utilities::get31TileNumberX(double longitude);
-int OsmAnd::Utilities::get31TileNumberY( double latitude);
-double OsmAnd::Utilities::get31LongitudeX(int x);
-double OsmAnd::Utilities::get31LatitudeY(int y);
-double OsmAnd::Utilities::getTileNumberX(float zoom, double longitude);
-double OsmAnd::Utilities::getTileNumberY(float zoom,  double latitude);
-double OsmAnd::Utilities::checkLatitude(double latitude);
-double OsmAnd::Utilities::checkLongitude(double longitude);
-double OsmAnd::Utilities::getPowZoom(float zoom);
-double OsmAnd::Utilities::getLongitudeFromTile(float zoom, double x);
-double OsmAnd::Utilities::getLatitudeFromTile(float zoom, double y);
-*/
+namespace OsmAnd::Utilities {
+	int get31TileNumberX(double longitude);
+	int get31TileNumberY( double latitude);
+	double get31LongitudeX(int x);
+	double get31LatitudeY(int y);
+	double getTileNumberX(float zoom, double longitude);
+	double getTileNumberY(float zoom,  double latitude);
+	double checkLatitude(double latitude);
+	double checkLongitude(double longitude);
+	double getPowZoom(float zoom);
+	double getLongitudeFromTile(float zoom, double x);
+	double getLatitudeFromTile(float zoom, double y);
+}

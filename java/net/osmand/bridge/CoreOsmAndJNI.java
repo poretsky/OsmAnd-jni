@@ -56,4 +56,25 @@ public class CoreOsmAndJNI {
   public final static native int ObfInspector_inspector(long jarg1, StringVector jarg1_);
   public final static native long new_ObfInspector();
   public final static native void delete_ObfInspector(long jarg1);
+  public final static native void ObfSection__name_set(long jarg1, ObfSection jarg1_, long jarg2);
+  public final static native long ObfSection__name_get(long jarg1, ObfSection jarg1_);
+  public final static native void ObfSection__length_set(long jarg1, ObfSection jarg1_, long jarg2);
+  public final static native long ObfSection__length_get(long jarg1, ObfSection jarg1_);
+  public final static native void ObfSection__offset_set(long jarg1, ObfSection jarg1_, long jarg2);
+  public final static native long ObfSection__offset_get(long jarg1, ObfSection jarg1_);
+  public final static native void delete_ObfSection(long jarg1);
+  public final static native int ObfReader_getVersion(long jarg1, ObfReader jarg1_);
+  public final static native long ObfReader_getSections(long jarg1, ObfReader jarg1_);
+  public final static native void delete_ObfReader(long jarg1);
+  public final static native int get31TileNumberX(double jarg1);
+  public final static native int get31TileNumberY(double jarg1);
+  public final static native double get31LongitudeX(int jarg1);
+  public final static native double get31LatitudeY(int jarg1);
+  public final static native double getTileNumberX(float jarg1, double jarg2);
+  public final static native double getTileNumberY(float jarg1, double jarg2);
+  public final static native double checkLatitude(double jarg1);
+  public final static native double checkLongitude(double jarg1);
+  public final static native double getPowZoom(float jarg1);
+  public final static native double getLongitudeFromTile(float jarg1, double jarg2);
+  public final static native double getLatitudeFromTile(float jarg1, double jarg2);
 }

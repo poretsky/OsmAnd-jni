@@ -287,7 +287,7 @@ SWIGINTERN void std_vector_Sl_char_SS_const_Sm__Sg__set(std::vector< char const 
 #include <QStringList>
 #include <Inspector.h>
 #include <ObfReader.h>
-
+#include <ObfSection.h>
 
 class ObfInspector {
 public:
@@ -1047,6 +1047,320 @@ SWIGEXPORT void JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_delete_1ObfInspecto
   (void)jcls;
   arg1 = *(ObfInspector **)&jarg1; 
   delete arg1;
+}
+
+
+SWIGEXPORT void JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_ObfSection_1_1name_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+  OsmAnd::ObfSection *arg1 = (OsmAnd::ObfSection *) 0 ;
+  QString arg2 ;
+  QString *argp2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(OsmAnd::ObfSection **)&jarg1; 
+  argp2 = *(QString **)&jarg2; 
+  if (!argp2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "Attempt to dereference null QString");
+    return ;
+  }
+  arg2 = *argp2; 
+  if (arg1) (arg1)->_name = arg2;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_ObfSection_1_1name_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  OsmAnd::ObfSection *arg1 = (OsmAnd::ObfSection *) 0 ;
+  QString result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(OsmAnd::ObfSection **)&jarg1; 
+  result =  ((arg1)->_name);
+  *(QString **)&jresult = new QString((const QString &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_ObfSection_1_1length_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+  OsmAnd::ObfSection *arg1 = (OsmAnd::ObfSection *) 0 ;
+  uint32_t arg2 ;
+  uint32_t *argp2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(OsmAnd::ObfSection **)&jarg1; 
+  argp2 = *(uint32_t **)&jarg2; 
+  if (!argp2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "Attempt to dereference null uint32_t");
+    return ;
+  }
+  arg2 = *argp2; 
+  if (arg1) (arg1)->_length = arg2;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_ObfSection_1_1length_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  OsmAnd::ObfSection *arg1 = (OsmAnd::ObfSection *) 0 ;
+  uint32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(OsmAnd::ObfSection **)&jarg1; 
+  result =  ((arg1)->_length);
+  *(uint32_t **)&jresult = new uint32_t((const uint32_t &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_ObfSection_1_1offset_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+  OsmAnd::ObfSection *arg1 = (OsmAnd::ObfSection *) 0 ;
+  uint32_t arg2 ;
+  uint32_t *argp2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(OsmAnd::ObfSection **)&jarg1; 
+  argp2 = *(uint32_t **)&jarg2; 
+  if (!argp2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "Attempt to dereference null uint32_t");
+    return ;
+  }
+  arg2 = *argp2; 
+  if (arg1) (arg1)->_offset = arg2;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_ObfSection_1_1offset_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  OsmAnd::ObfSection *arg1 = (OsmAnd::ObfSection *) 0 ;
+  uint32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(OsmAnd::ObfSection **)&jarg1; 
+  result =  ((arg1)->_offset);
+  *(uint32_t **)&jresult = new uint32_t((const uint32_t &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_delete_1ObfSection(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  OsmAnd::ObfSection *arg1 = (OsmAnd::ObfSection *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(OsmAnd::ObfSection **)&jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT jint JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_ObfReader_1getVersion(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
+  OsmAnd::ObfReader *arg1 = (OsmAnd::ObfReader *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(OsmAnd::ObfReader **)&jarg1; 
+  result = (int)(arg1)->getVersion();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_ObfReader_1getSections(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  OsmAnd::ObfReader *arg1 = (OsmAnd::ObfReader *) 0 ;
+  SwigValueWrapper< std::list< OsmAnd::ObfSection * > > result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(OsmAnd::ObfReader **)&jarg1; 
+  result = (arg1)->getSections();
+  *(std::list< OsmAnd::ObfSection * > **)&jresult = new std::list< OsmAnd::ObfSection * >((const std::list< OsmAnd::ObfSection * > &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_delete_1ObfReader(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  OsmAnd::ObfReader *arg1 = (OsmAnd::ObfReader *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(OsmAnd::ObfReader **)&jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT jint JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_get31TileNumberX(JNIEnv *jenv, jclass jcls, jdouble jarg1) {
+  jint jresult = 0 ;
+  double arg1 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (double)jarg1; 
+  result = (int)OsmAnd::Utilities::get31TileNumberX(arg1);
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_get31TileNumberY(JNIEnv *jenv, jclass jcls, jdouble jarg1) {
+  jint jresult = 0 ;
+  double arg1 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (double)jarg1; 
+  result = (int)OsmAnd::Utilities::get31TileNumberY(arg1);
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_get31LongitudeX(JNIEnv *jenv, jclass jcls, jint jarg1) {
+  jdouble jresult = 0 ;
+  int arg1 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (int)jarg1; 
+  result = (double)OsmAnd::Utilities::get31LongitudeX(arg1);
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_get31LatitudeY(JNIEnv *jenv, jclass jcls, jint jarg1) {
+  jdouble jresult = 0 ;
+  int arg1 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (int)jarg1; 
+  result = (double)OsmAnd::Utilities::get31LatitudeY(arg1);
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_getTileNumberX(JNIEnv *jenv, jclass jcls, jfloat jarg1, jdouble jarg2) {
+  jdouble jresult = 0 ;
+  float arg1 ;
+  double arg2 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (float)jarg1; 
+  arg2 = (double)jarg2; 
+  result = (double)OsmAnd::Utilities::getTileNumberX(arg1,arg2);
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_getTileNumberY(JNIEnv *jenv, jclass jcls, jfloat jarg1, jdouble jarg2) {
+  jdouble jresult = 0 ;
+  float arg1 ;
+  double arg2 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (float)jarg1; 
+  arg2 = (double)jarg2; 
+  result = (double)OsmAnd::Utilities::getTileNumberY(arg1,arg2);
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_checkLatitude(JNIEnv *jenv, jclass jcls, jdouble jarg1) {
+  jdouble jresult = 0 ;
+  double arg1 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (double)jarg1; 
+  result = (double)OsmAnd::Utilities::checkLatitude(arg1);
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_checkLongitude(JNIEnv *jenv, jclass jcls, jdouble jarg1) {
+  jdouble jresult = 0 ;
+  double arg1 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (double)jarg1; 
+  result = (double)OsmAnd::Utilities::checkLongitude(arg1);
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_getPowZoom(JNIEnv *jenv, jclass jcls, jfloat jarg1) {
+  jdouble jresult = 0 ;
+  float arg1 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (float)jarg1; 
+  result = (double)OsmAnd::Utilities::getPowZoom(arg1);
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_getLongitudeFromTile(JNIEnv *jenv, jclass jcls, jfloat jarg1, jdouble jarg2) {
+  jdouble jresult = 0 ;
+  float arg1 ;
+  double arg2 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (float)jarg1; 
+  arg2 = (double)jarg2; 
+  result = (double)OsmAnd::Utilities::getLongitudeFromTile(arg1,arg2);
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_getLatitudeFromTile(JNIEnv *jenv, jclass jcls, jfloat jarg1, jdouble jarg2) {
+  jdouble jresult = 0 ;
+  float arg1 ;
+  double arg2 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (float)jarg1; 
+  arg2 = (double)jarg2; 
+  result = (double)OsmAnd::Utilities::getLatitudeFromTile(arg1,arg2);
+  jresult = (jdouble)result; 
+  return jresult;
 }
 
 
