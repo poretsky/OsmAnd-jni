@@ -2,6 +2,10 @@ package net.osmand;
 
 import gnu.trove.list.array.TIntArrayList;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,6 +13,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.commons.logging.Log;
 
 import net.osmand.binary.BinaryMapRouteReaderAdapter.RouteRegion;
 import net.osmand.binary.BinaryMapRouteReaderAdapter.RouteSubregion;
@@ -220,4 +226,60 @@ public class NativeLibrary {
 	
 	public static int testNativeRouting(String obfPath, double sLat, double sLon, double eLat, double eLon) {return 0;}
 	/* */
+
+		public static final String NATIVE_LIB_NAME = "OsmAndCore";
+		private static final Log log = PlatformUtil.getLog(NativeLibrary.class);
+		public static boolean load(String path) {
+			// look for a pre-installed library
+			if (path != null) {
+				try {
+					System.load(path);
+					return true;
+				} catch (UnsatisfiedLinkError e) {
+					log.error(e);
+				} // fall through
+			}
+
+			// guess what a bundled library would be called
+			String osname = System.getProperty("os.name").toLowerCase();
+			String osarch = System.getProperty("os.arch");
+			if (osname.startsWith("mac os")) {
+				osname = "mac";
+				osarch = "universal";
+			}
+			if (osname.startsWith("windows"))
+				osname = "win";
+			if (osname.startsWith("sunos"))
+				osname = "solaris";
+			if (osarch.startsWith("i") && osarch.endsWith("86"))
+				osarch = "x86";
+			String libname = NATIVE_LIB_NAME +"-" + osname + '-' + osarch + ".lib";
+
+			// try a bundled library
+			try {
+				ClassLoader cl = NativeLibrary.class.getClassLoader();
+				InputStream in = cl.getResourceAsStream(libname);
+				if (in == null) {
+					log.error("libname: " + libname + " not found");
+					return false;
+				}
+				File tmplib = File.createTempFile(NATIVE_LIB_NAME + "-", ".lib");
+				tmplib.deleteOnExit();
+				OutputStream out = new FileOutputStream(tmplib);
+				byte[] buf = new byte[1024];
+				for (int len; (len = in.read(buf)) != -1;)
+					out.write(buf, 0, len);
+				in.close();
+				out.close();
+
+				System.load(tmplib.getAbsolutePath());
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.error(e.getMessage(), e);
+			} catch (UnsatisfiedLinkError e) {
+				log.error(e.getMessage(), e);
+			} // fall through
+			return false;
+		}
 }

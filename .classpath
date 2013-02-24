@@ -3,6 +3,7 @@
 	<classpathentry excluding="com/OsMoDroid/" kind="src" path="android"/>
 	<classpathentry kind="src" path="java"/>
 	<classpathentry kind="src" path="log"/>
+	<classpathentry kind="src" path="bridge"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libs/bsh-core-2.0b4.jar"/>
 	<classpathentry kind="lib" path="libs/bzip2-20090327.jar"/>
