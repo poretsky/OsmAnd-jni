@@ -51,7 +51,7 @@ public class BinaryInspector {
 		// test cases show info
 		
 		
-//		inspector(new String[]{"-vmap", /*"-bbox=11.3,49,11.6,47",*/ "/home/victor/projects/OsmAnd/data/osm-gen/Map.obf"});
+		inspector(new String[]{"-vmap", "-bbox=11.3,47.05,11.4,47", "/home/victor/projects/OsmAnd/data/osm-gen/Austria_2.obf"});
 		// test case extract parts
 		// test case 
 	}

@@ -1,5 +1,5 @@
 %module CoreOsmAnd
-// # swig -c++ -java -package net.osmand.bridge -outdir bridge/net/osmand/bridge -o native/java_core_wrap.cpp osmand.i; 
+// # swig -c++ -java -package net.osmand.bridge -outdir java/net/osmand/bridge -o native/java_core_wrap.cpp osmand.i; 
 %include "typemaps.i"
 %include "std_string.i"
 %include "std_vector.i"
