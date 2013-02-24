@@ -2,15 +2,11 @@
 // # swig -c++ -java -package net.osmand.bridge -outdir java/net/osmand/bridge -o native/java_core_wrap.cpp osmand.i; 
 %include "typemaps.i"
 %include "std_string.i"
+%include "std_list.i"
 %include "std_vector.i"
-namespace std {
-   %template(IntVector) vector<int>;
-   %template(DoubleVector) vector<double>;
-   %template(StringVector) vector<string>;
-   %template(ConstCharVector) vector<const char*>;
-}
 
 %{
+
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -44,11 +40,20 @@ public:
 };
 %}
 
+namespace std {
+   // %template(IntVector) vector<int>;
+   // %template(DoubleVector) vector<double>;
+   %template(StringVector) vector<string>;
+   // %template(ConstCharVector) vector<const char*>;
+   // %template(SectionList) std::list< OsmAnd::ObfSection* >;
+   // %template(QStringList) list<QString>;
+}
+
 class ObfInspector {
 public:
 	static int ObfInspector::inspector(std::vector<std::string> argv) ;
 };
-
+/*
 namespace OsmAnd {
 %nodefaultctor ObfSection;
 struct ObfSection {
@@ -62,8 +67,8 @@ public :
 	int getVersion();
     std::list< OsmAnd::ObfSection* > getSections();
 };
-
 }
+*/
 
 namespace OsmAnd::Utilities {
 	int get31TileNumberX(double longitude);

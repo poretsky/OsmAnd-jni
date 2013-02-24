@@ -38,7 +38,7 @@
 	  		<include name="**/*.java"/>
 			<exclude name="net/osmand/plus/**"/>
 		</javac>
-		<exec command="bash collect_libs.sh"></exec>
+		<exec command="bash collect_libs.sh" failonerror="true"></exec>
 	</target>
 
 	<target name="jar" depends="compile">
