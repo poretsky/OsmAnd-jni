@@ -49,7 +49,9 @@ add_library(OsmAndJNI SHARED
 )
 
 target_link_libraries(OsmAndJNI LINK_PUBLIC
-	OsmAndCore
+ OsmAndCore
+ OsmAndCoreUtils
 )
+
 find_package(Qt5Core REQUIRED)
 qt5_use_modules(OsmAndJNI Core)

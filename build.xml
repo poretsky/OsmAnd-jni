@@ -38,12 +38,11 @@
 		 encoding="${java.encoding}"
 		 classpathref="build.path"
 		 debug="on"
-		 source="1.6"
-	  >
+		 source="1.6">
 	  		<include name="**/*.java"/>
 			<exclude name="net/osmand/plus/**"/>
 		</javac>
-
+		<exec command="bash collect_libs.sh"></exec>
 	</target>
 
 	<target name="jar" depends="compile">
@@ -53,7 +52,6 @@
 		<echo>list is  ${lib.list}</echo>
 
 		<delete file="OsmAnd-core.jar" />
-		<delete file="OsmAnd-avian.jar" />
 		<delete file="MANIFEST.MF" />
 		<manifest file="MANIFEST.MF">
 			<attribute name="Built-By" value="${user.name}" />
