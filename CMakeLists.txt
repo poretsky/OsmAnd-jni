@@ -2,10 +2,11 @@ project(OsmAndJNI)
 
 include_directories(AFTER SYSTEM
 	"${OSMAND_ROOT}/core/include"
-	"${OSMAND_ROOT}/core/src"
+	"${OSMAND_ROOT}/core/protos"
 	"${OSMAND_ROOT}/core/utils"
 	"$ENV{JAVA_HOME}/include"
 )
+
 if(CMAKE_TARGET_OS STREQUAL "windows")
 	include_directories(AFTER SYSTEM
 		"$ENV{JAVA_HOME}/include/win32"
