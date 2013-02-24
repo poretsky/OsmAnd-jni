@@ -1,6 +1,7 @@
 project(OsmAndJNI)
 
 include_directories(AFTER SYSTEM
+	"${OSMAND_ROOT}/core/externals/protobuf/upstream.patched/src"
 	"${OSMAND_ROOT}/core/include"
 	"${OSMAND_ROOT}/core/protos"
 	"${OSMAND_ROOT}/core/utils"
