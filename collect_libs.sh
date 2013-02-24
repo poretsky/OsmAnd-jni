@@ -17,12 +17,13 @@ function compile {
   if [ ! -d "$ROOT_LOC/baked/amd64-linux-gcc-amd64-linux-gcc" ]; then 
 	  "$ROOT_LOC/build/amd64-linux-gcc.sh"
   fi
-  (cd "$ROOT_LOC/baked/amd64-linux-gcc-amd64-linux-gcc" && make -j`nproc` OsmAndCore)
+  (cd "$ROOT_LOC/baked/amd64-linux-gcc-amd64-linux-gcc" && make -j`nproc`)
   if [ ! -d "$ROOT_LOC/baked/i686-linux-gcc-i686-linux-gcc" ]; then 
       "$ROOT_LOC/build/i686-linux-gcc.sh"
   fi
+  (cd "$ROOT_LOC/baked/i686-linux-gcc-i686-linux-gcc" && make -j`nproc`)
 }
 
 compile
-# copyLibs linux amd64 amd64 so
+copyLibs linux amd64 amd64 so
 copyLibs linux i686 x86 so
