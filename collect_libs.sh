@@ -1,5 +1,6 @@
 #!/bin/bash
-ROOT_LOC=..
+SCRIPT_LOC="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT_LOC="$SCRIPT_LOC/.."
 function copyLibs {
 	if [ -d "$ROOT_LOC/binaries/$1/$2" ]; then 
       echo "Copy binaries $1 $2";
@@ -10,5 +11,18 @@ function copyLibs {
     fi
 }
 
+function compile {
+  "$ROOT_LOC/core/externals/configure.sh"
+  "$ROOT_LOC/core/externals/qtbase-desktop/build.sh"
+  if [ ! -d "$ROOT_LOC/baked/amd64-linux-gcc-amd64-linux-gcc" ]; then 
+	  "$ROOT_LOC/build/amd64-linux-gcc.sh"
+  fi
+  (cd "$ROOT_LOC/baked/amd64-linux-gcc-amd64-linux-gcc" && make -j`nproc` OsmAndCore)
+  if [ ! -d "$ROOT_LOC/baked/i686-linux-gcc-i686-linux-gcc" ]; then 
+      "$ROOT_LOC/build/i686-linux-gcc.sh"
+  fi
+}
+
+compile
 # copyLibs linux amd64 amd64 so
 copyLibs linux i686 x86 so
