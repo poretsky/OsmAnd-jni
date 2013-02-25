@@ -108,10 +108,7 @@ public class City extends MapObject {
 			} else {
 				// try to merge streets
 				Street prev = streets.get(name);
-				if (!street.getWayNodes().isEmpty()) {
-					prev.getWayNodes().addAll(street.getWayNodes());
-				}
-				prev.getBuildings().addAll(street.getBuildings());
+				prev.mergeWith(street);
 				return prev;
 			}
 		}

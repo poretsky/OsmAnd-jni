@@ -1,12 +1,11 @@
 package net.osmand.osm;
 
-import gnu.trove.list.array.TIntArrayList;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,16 +16,13 @@ import java.util.TreeMap;
 
 import net.osmand.PlatformUtil;
 import net.osmand.data.AmenityType;
-import net.osmand.osm.OSMSettings.OSMTagKey;
 
 import org.apache.commons.logging.Log;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-
 /**
- * SOURCE : http://wiki.openstreetmap.org/wiki/Map_Features
- * 
+ * reference : http://wiki.openstreetmap.org/wiki/Map_Features
  * Describing types of polygons :
  * 1. Last 2 bits define type of element : polygon, polyline, point 
  */
@@ -38,6 +34,14 @@ public class MapRenderingTypes {
 	private static char TAG_DELIMETER = '/'; //$NON-NLS-1$
 	
 	private String resourceName = null;
+	public final static byte RESTRICTION_NO_RIGHT_TURN = 1;
+	public final static byte RESTRICTION_NO_LEFT_TURN = 2;
+	public final static byte RESTRICTION_NO_U_TURN = 3;
+	public final static byte RESTRICTION_NO_STRAIGHT_ON = 4;
+	public final static byte RESTRICTION_ONLY_RIGHT_TURN = 5;
+	public final static byte RESTRICTION_ONLY_LEFT_TURN = 6;
+	public final static byte RESTRICTION_ONLY_STRAIGHT_ON = 7;
+	
 
 	// stored information to convert from osm tags to int type
 	private Map<String, MapRulType> types = null;
@@ -54,7 +58,6 @@ public class MapRenderingTypes {
 	public MapRenderingTypes(String fileName){
 		this.resourceName = fileName;
 	}
-	
 	
 	private static MapRenderingTypes DEFAULT_INSTANCE = null;
 	
@@ -117,126 +120,6 @@ public class MapRenderingTypes {
 	public MapRulType getCoastlineRuleType() {
 		getEncodingRuleTypes();
 		return coastlineRuleType;
-	}
-	
-	private MapRulType getRelationalTagValue(String tag, String val) {
-		MapRulType rType = getRuleType(tag, val);
-		if(rType != null && rType.relation) {
-			return rType;
-		}
-		return null;
-	}
-	
-	
-	public Map<MapRulType, String> getRelationPropogatedTags(Relation relation) {
-		Map<MapRulType, String> propogated = new LinkedHashMap<MapRulType, String>();
-		Map<String, String> ts = relation.getTags();
-		Iterator<Entry<String, String>> its = ts.entrySet().iterator();
-		while(its.hasNext()) {
-			Entry<String, String> ev = its.next();
-			MapRulType rule = getRelationalTagValue(ev.getKey(), ev.getValue());
-			if(rule != null) {
-				String value = ev.getValue();
-				if(rule.targetTagValue != null) {
-					rule = rule.targetTagValue;
-					if(rule.getValue() != null) {
-						value = rule.getValue();
-					}
-				}
-				if (rule.names != null) {
-					for (int i = 0; i < rule.names.length; i++) {
-						String tag = rule.names[i].tag.substring(rule.namePrefix.length());
-						if(ts.containsKey(tag)) {
-							propogated.put(rule.names[i], ts.get(tag));
-						}
-					}
-				}
-				propogated.put(rule, value);
-			}
-			addParsedSpecialTags(propogated, ev);
-		}
-		return propogated;
-	}
-	
-	public void addParsedSpecialTags(Map<MapRulType,String> propogated, Entry<String,String> ev) {
-		if ("osmc:symbol".equals(ev.getKey())) {
-			String[] tokens = ev.getValue().split(":", 6);
-			if (tokens.length > 0) {
-				String symbol_name = "osmc_symbol_" + tokens[0];
-				MapRulType rt = getRuleType(symbol_name, "");
-				if(rt != null) {
-					propogated.put(rt, "");
-					if (tokens.length > 2 && rt.names != null) {
-						String symbol = "osmc_symbol_" + tokens[1] + "_" + tokens[2];
-						String name = "\u00A0";
-						if (tokens.length > 3 && tokens[3].trim().length() > 0) {
-							name = tokens[3];
-						}
-						for(int k = 0; k < rt.names.length; k++) {
-							if(rt.names[k].tag.equals(symbol)) {
-								propogated.put(rt.names[k], name);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	// if type equals 0 no need to save that point
-	public boolean encodeEntityWithType(Entity e, int zoom, TIntArrayList outTypes, 
-			TIntArrayList outaddTypes, Map<MapRulType, String> namesToEncode, List<MapRulType> tempList) {
-		outTypes.clear();
-		outaddTypes.clear();
-		namesToEncode.clear();
-		tempList.clear();
-		tempList.add(nameRuleType);
-
-		boolean area = "yes".equals(e.getTag("area")) || "true".equals(e.getTag("area"));
-
-		Collection<String> tagKeySet = e.getTagKeySet();
-		for (String tag : tagKeySet) {
-			String val = e.getTag(tag);
-			MapRulType rType = getRuleType(tag, val);
-			if (rType != null) {
-				if (rType.minzoom > zoom) {
-					continue;
-				}
-				if(rType.targetTagValue != null) {
-					rType = rType.targetTagValue;
-				}
-				rType.updateFreq();
-				if (rType.names != null) {
-					for (int i = 0; i < rType.names.length; i++) {
-						tempList.add(rType.names[i]);
-					}
-				}
-
-				if (!rType.onlyNameRef) {
-					if (rType.additional) {
-						outaddTypes.add(rType.id);
-					} else {
-						outTypes.add(rType.id);
-					}
-				}
-			}
-		}
-		for(MapRulType mt : tempList){
-			String val = e.getTag(mt.tag);
-			if(val != null && val.length() > 0){
-				namesToEncode.put(mt, val);
-			}
-		}
-		return area;
-	}
-
-	private MapRulType getRuleType(String tag, String val) {
-		Map<String, MapRulType> types = getEncodingRuleTypes();
-		MapRulType rType = types.get(constructRuleKey(tag, val));
-		if (rType == null) {
-			rType = types.get(constructRuleKey(tag, null));
-		}
-		return rType;
 	}
 	
 	
@@ -507,25 +390,25 @@ public class MapRenderingTypes {
 	}
 	
 	public static class MapRulType {
-		MapRulType[] names;
-		String tag;
-		String value;
-		int minzoom;
-		boolean additional;
-		boolean relation;
-		MapRulType targetTagValue;
-		boolean onlyNameRef;
+		protected MapRulType[] names;
+		protected String tag;
+		protected String value;
+		protected int minzoom;
+		protected boolean additional;
+		protected boolean relation;
+		protected MapRulType targetTagValue;
+		protected boolean onlyNameRef;
 		
 		// inner id
-		private int id;
-		int freq;
-		int targetId;
+		protected int id;
+		protected int freq;
+		protected int targetId;
 		
-		String poiPrefix;
-		String namePrefix ="";
-		String nameCombinator = null;
-		AmenityType poiCategory;
-		boolean poiSpecified;
+		protected String poiPrefix;
+		protected String namePrefix ="";
+		protected String nameCombinator = null;
+		protected AmenityType poiCategory;
+		protected boolean poiSpecified;
 		
 		
 		public MapRulType(){
@@ -593,155 +476,13 @@ public class MapRenderingTypes {
 		}
 	}
 	
-	// TODO Move to Routing Attributes and finalize 
-	// HIGHWAY special attributes :
-	// o/oneway			1 bit
-	// f/free toll 		1 bit
-	// r/roundabout  	2 bit (+ 1 bit direction)
-	// s/max speed   	3 bit [0 - 30km/h, 1 - 50km/h, 2 - 70km/h, 3 - 90km/h, 4 - 110km/h, 5 - 130 km/h, 6 >, 7 - 0/not specified]
-	// a/vehicle access 4 bit   (height, weight?) - one bit bicycle
-	// p/parking      	1 bit
-	// c/cycle oneway 	1 bit
-	// ci/inside city   1 bit
-	// ENCODING :  ci|c|p|aaaa|sss|rr|f|o - 14 bit
-	
-	public final static byte RESTRICTION_NO_RIGHT_TURN = 1;
-	public final static byte RESTRICTION_NO_LEFT_TURN = 2;
-	public final static byte RESTRICTION_NO_U_TURN = 3;
-	public final static byte RESTRICTION_NO_STRAIGHT_ON = 4;
-	public final static byte RESTRICTION_ONLY_RIGHT_TURN = 5;
-	public final static byte RESTRICTION_ONLY_LEFT_TURN = 6;
-	public final static byte RESTRICTION_ONLY_STRAIGHT_ON = 7;
-	
-
-	public static boolean isOneWayWay(int highwayAttributes){
-		return (highwayAttributes & 1) > 0;
+	public Collection<String> getAmenitySubCategories(AmenityType t){
+		Map<AmenityType, Map<String, String>> amenityTypeNameToTagVal = getAmenityTypeNameToTagVal();
+		if(!amenityTypeNameToTagVal.containsKey(t)){
+			return Collections.emptyList(); 
+		}
+		return amenityTypeNameToTagVal.get(t).keySet();
 	}
-	
-	public static boolean isRoundabout(int highwayAttributes){
-		return ((highwayAttributes >> 2) & 1) > 0;
-	}
-	
-	// return 0 if not defined
-	public static int getMaxSpeedIfDefined(int highwayAttributes){
-		switch((highwayAttributes >> 4) & 7) {
-		case 0:
-			return 20;
-		case 1:
-			return 40;
-		case 2:
-			return 60;
-		case 3:
-			return 80;
-		case 4:
-			return 100;
-		case 5:
-			return 120;
-		case 6:
-			return 140;
-		case 7:
-			return 0;
-		
-		}
-		return 0;
-	}
-	
-
-	public static int getHighwayAttributes(Entity e){
-		int attr = 0;
-		// cycle oneway
-		attr <<= 1;
-		String c = e.getTag("cycleway"); //$NON-NLS-1$
-		if(c != null && ("opposite_lane".equals(c) || "opposite_track".equals(c) || "opposite".equals(c))){ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			attr |= 1;
-		}
-		// parking
-		attr <<= 1;
-		String park = e.getTag("service"); //$NON-NLS-1$
-		if("parking_aisle".equals(park)){ //$NON-NLS-1$
-			attr |= 1;
-		}
-
-		// ACCESS not complete (should be redesigned)
-		// vehicle access (not implement yet) 
-		attr <<= 3;
-		boolean hgv = "yes".equals(e.getTag("hgv")); //$NON-NLS-1$ //$NON-NLS-2$
-		if(hgv){
-			attr |= 3;
-		} else {
-			boolean goods = "yes".equals(e.getTag("goods")); //$NON-NLS-1$ //$NON-NLS-2$
-			if(goods){
-				attr |= 2;
-			} else {
-				attr |= 1;
-			}
-		}
-		// bicycle access
-		attr <<= 1;
-		
-		
-		// speed
-		// very simple algorithm doesn't consider city rules (country rules) and miles per hour
-		attr <<= 3;
-		String maxspeed = e.getTag("maxspeed"); //$NON-NLS-1$
-		if(maxspeed != null){
-			int kmh = 0;
-			try {
-				kmh = Integer.parseInt(maxspeed);
-			} catch (NumberFormatException es) {
-			}
-			if(kmh <= 0){
-				attr |= 7;
-			} else if(kmh <= 30){
-				attr |= 0;
-			} else if(kmh <= 50){
-				attr |= 1;
-			} else if(kmh <= 70){
-				attr |= 2;
-			} else if(kmh <= 90){
-				attr |= 3;
-			} else if(kmh <= 110){
-				attr |= 4;
-			} else if(kmh <= 130){
-				attr |= 5;
-			} else {
-				attr |= 6;
-			}
-		} else {
-			attr |= 7;
-		}
-		
-		
-		// roundabout
-		attr <<= 2;
-		String jun = e.getTag(OSMTagKey.JUNCTION);
-		if(jun != null){
-			if("roundabout".equals(jun)){ //$NON-NLS-1$
-				attr |= 1;
-				if("clockwise".equals(e.getTag("direction"))){ //$NON-NLS-1$ //$NON-NLS-2$
-					attr |= 2;
-				}
-			} 
-		}
-		
-		// toll
-		String toll = e.getTag(OSMTagKey.TOLL);
-		attr <<= 1;
-		if(toll != null){
-			if("yes".equals(toll)){ //$NON-NLS-1$
-				attr |= 1;
-			}
-		}
-		
-		// oneway
-		String one = e.getTag(OSMTagKey.ONEWAY);
-		attr <<= 1;
-		if(one != null && (one.equals("yes") || one.equals("1") || one.equals("-1"))){  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
- 			attr |= 1;
- 		}
-		return attr;
-	}
-
 	
 }
 

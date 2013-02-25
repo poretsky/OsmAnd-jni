@@ -1,12 +1,5 @@
 package net.osmand.data;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-
-import net.osmand.osm.MapRenderingTypes;
-
-
 // http://wiki.openstreetmap.org/wiki/Amenity
 // POI tags : amenity, leisure, shop, sport, tourism, historic; accessories (internet-access), natural ?
 public enum AmenityType {
@@ -60,14 +53,6 @@ public enum AmenityType {
 	
 	public static AmenityType[] getCategories(){
 		return AmenityType.values();
-	}
-	
-	public static Collection<String> getSubCategories(AmenityType t, MapRenderingTypes renderingTypes){
-		Map<AmenityType, Map<String, String>> amenityTypeNameToTagVal = renderingTypes.getAmenityTypeNameToTagVal();
-		if(!amenityTypeNameToTagVal.containsKey(t)){
-			return Collections.emptyList(); 
-		}
-		return amenityTypeNameToTagVal.get(t).keySet();
 	}
 	
 	

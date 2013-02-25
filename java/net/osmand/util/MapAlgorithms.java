@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.List;
 
 import net.osmand.data.LatLon;
-import net.osmand.osm.Node;
-import net.osmand.osm.Way;
+import net.osmand.osm.edit.Node;
+import net.osmand.osm.edit.Way;
 
 public class MapAlgorithms {
 	

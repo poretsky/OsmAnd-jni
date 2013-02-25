@@ -1,4 +1,4 @@
-package net.osmand.osm;
+package net.osmand.osm.edit;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,7 +12,8 @@ import net.osmand.data.LatLon;
 import net.osmand.data.MapObject;
 import net.osmand.data.Street;
 import net.osmand.data.TransportStop;
-import net.osmand.osm.OSMSettings.OSMTagKey;
+import net.osmand.osm.MapRenderingTypes;
+import net.osmand.osm.edit.OSMSettings.OSMTagKey;
 import net.osmand.util.Algorithms;
 import net.osmand.util.MapUtils;
 

@@ -1,4 +1,4 @@
-package net.osmand.osm;
+package net.osmand.osm.edit;
 
 import java.util.ArrayList;
 import java.util.Collection;

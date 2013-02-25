@@ -1,4 +1,4 @@
-package net.osmand.osm;
+package net.osmand.osm.edit;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.osmand.data.LatLon;
-import net.osmand.osm.OSMSettings.OSMTagKey;
+import net.osmand.osm.edit.OSMSettings.OSMTagKey;
 
 
 public abstract class Entity {

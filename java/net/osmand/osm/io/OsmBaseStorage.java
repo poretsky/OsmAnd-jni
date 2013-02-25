@@ -14,13 +14,13 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import net.osmand.IProgress;
-import net.osmand.osm.Entity;
-import net.osmand.osm.Entity.EntityId;
-import net.osmand.osm.Entity.EntityType;
-import net.osmand.osm.EntityInfo;
-import net.osmand.osm.Node;
-import net.osmand.osm.Relation;
-import net.osmand.osm.Way;
+import net.osmand.osm.edit.Entity;
+import net.osmand.osm.edit.EntityInfo;
+import net.osmand.osm.edit.Node;
+import net.osmand.osm.edit.Relation;
+import net.osmand.osm.edit.Way;
+import net.osmand.osm.edit.Entity.EntityId;
+import net.osmand.osm.edit.Entity.EntityType;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import net.osmand.osm.Entity;
-import net.osmand.osm.Node;
-import net.osmand.osm.OSMSettings.OSMTagKey;
-import net.osmand.osm.Way;
+import net.osmand.osm.edit.Entity;
+import net.osmand.osm.edit.Node;
+import net.osmand.osm.edit.Way;
+import net.osmand.osm.edit.OSMSettings.OSMTagKey;
 import net.osmand.util.Algorithms;
 import net.osmand.util.MapUtils;
 

@@ -1,4 +1,4 @@
-package net.osmand.osm;
+package net.osmand.osm.edit;
 
 import java.io.Serializable;
 import java.util.Map;
