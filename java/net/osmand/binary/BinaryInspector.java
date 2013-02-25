@@ -51,7 +51,7 @@ public class BinaryInspector {
 		// test cases show info
 		
 		
-		inspector(new String[]{"-vaddress", "-vstreetgroups", /*"-bbox=11.3,47.05,11.4,47", */"/home/victor/projects/OsmAnd/data/osm-gen/Israel_and_palestine_asia_2.obf"});
+//		inspector(new String[]{"-vmap", /*"-bbox=11.3,47.05,11.4,47", */"/home/victor/projects/OsmAnd/data/osm-gen/Map.obf"});
 		// test case extract parts
 		// test case 
 	}
