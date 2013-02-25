@@ -15,7 +15,6 @@ import net.osmand.data.TransportStop;
 import net.osmand.osm.MapRenderingTypes;
 import net.osmand.osm.edit.OSMSettings.OSMTagKey;
 import net.osmand.util.Algorithms;
-import net.osmand.util.MapUtils;
 
 public class EntityParser {
 	
@@ -31,7 +30,7 @@ public class EntityParser {
 			}
 		}
 		if (mo.getLocation() == null) {
-			LatLon l = MapUtils.getCenter(e);
+			LatLon l = OsmMapUtils.getCenter(e);
 			if (l != null) {
 				mo.setLocation(l.getLatitude(), l.getLongitude());
 			}
@@ -175,30 +174,6 @@ public class EntityParser {
 		return c;
 	}
 	
-	
-	public static Building registerBuilding(Street s, Entity e){
-		return registerBuilding(s, e, e.getTag(OSMTagKey.ADDR_HOUSE_NUMBER));
-	}
-	
-	public static  Building registerBuilding(Street s, Entity e, String ref){
-		if(ref == null){
-			return null;
-		}
-		Building building = parseBuilding(e);
-		building.setName(ref);
-		s.registerBuilding(building);
-		return building;
-	}
-	
-	public static Building registerBuilding(City c, Entity e) {
-		String number = e.getTag(OSMTagKey.ADDR_HOUSE_NUMBER);
-		String street = e.getTag(OSMTagKey.ADDR_STREET);
-		if (street != null && number != null) {
-			Street s = c.registerStreet(street);
-			registerBuilding(s, e);
-		}
-		return null;
-	}
 	
 	public static OsmTransportRoute parserRoute(Relation r, String ref){
 		OsmTransportRoute rt = new OsmTransportRoute();

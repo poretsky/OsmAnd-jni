@@ -9,10 +9,6 @@ import java.util.List;
 
 import net.osmand.data.LatLon;
 import net.osmand.data.MapObject;
-import net.osmand.osm.edit.Entity;
-import net.osmand.osm.edit.Node;
-import net.osmand.osm.edit.Relation;
-import net.osmand.osm.edit.Way;
 
 
 /**
@@ -39,21 +35,9 @@ public class MapUtils {
         'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '@'
     };
-	
-	public static double getDistance(Node e1, Node e2){
-		return getDistance(e1.getLatitude(), e1.getLongitude(), e2.getLatitude(), e2.getLongitude());
-	}
-	
+
 	public static double getDistance(LatLon l, double latitude, double longitude){
 		return getDistance(l.getLatitude(), l.getLongitude(), latitude, longitude);
-	}
-	
-	public static double getDistance(Node e1, double latitude, double longitude){
-		return getDistance(e1.getLatitude(), e1.getLongitude(), latitude, longitude);
-	}
-	
-	public static double getDistance(Node e1, LatLon point){
-		return getDistance(e1.getLatitude(), e1.getLongitude(), point.getLatitude(), point.getLongitude());
 	}
 	
 	private static double scalarMultiplication(double xA, double yA, double xB, double yB, double xC, double yC) {
@@ -110,92 +94,6 @@ public class MapUtils {
 	 */
 	public static double getDistance(LatLon l1, LatLon l2){
 		return getDistance(l1.getLatitude(), l1.getLongitude(), l2.getLatitude(), l2.getLongitude());
-	}
-
-	public static LatLon getCenter(Entity e){
-		if(e instanceof Node){
-			return ((Node) e).getLatLon();
-		} else if(e instanceof Way){
-			return getWeightCenterForNodes(((Way) e).getNodes());
-		} else if(e instanceof Relation){
-			List<LatLon> list = new ArrayList<LatLon>();
-			for(Entity fe : ((Relation) e).getMembers(null)){
-				LatLon c = null;
-				// skip relations to avoid circular dependencies
-				if(!(fe instanceof Relation)){
-					c = getCenter(fe);
-				}
-				if(c != null){
-					list.add(c);
-				}
-			}
-			return getWeightCenter(list);
-		}
-		return null;
-	}
-
-	public static LatLon getWeightCenter(Collection<LatLon> nodes){
-		if(nodes.isEmpty()){
-			return null;
-		}
-		double longitude = 0;
-		double latitude = 0;
-		for(LatLon n : nodes){
-			longitude += n.getLongitude();
-			latitude += n.getLatitude();
-		}
-		return new LatLon(latitude/nodes.size(), longitude/nodes.size());
-	}
-	
-	public static LatLon getWeightCenterForNodes(Collection<Node> nodes){
-		if (nodes.isEmpty()) {
-			return null;
-		}
-		double longitude = 0;
-		double latitude = 0;
-		int count = 0;
-		for (Node n : nodes) {
-			if (n != null) {
-				count++;
-				longitude += n.getLongitude();
-				latitude += n.getLatitude();
-			}
-		}
-		if (count == 0) {
-			return null;
-		}
-		return new LatLon(latitude/count, longitude/count);
-	}
-	
-	
-	public static LatLon getMathWeightCenterForNodes(Collection<Node> nodes){
-		if (nodes.isEmpty()) {
-			return null;
-		}
-		double longitude = 0;
-		double latitude = 0;
-		double sumDist = 0;
-		Node prev = null;
-		for (Node n : nodes) {
-			if (n != null) {
-				if(prev == null){
-					prev = n;
-				} else {
-					double dist = MapUtils.getDistance(prev, n);
-					sumDist += dist;
-					longitude += (prev.getLongitude() + n.getLongitude()) * dist / 2;
-					latitude += (n.getLatitude() + n.getLatitude()) * dist / 2;
-					prev = n;
-				}
-			}
-		}
-		if (sumDist == 0) {
-			if(prev == null){
-				return null;
-			}
-			return prev.getLatLon();
-		}
-		return new LatLon(latitude/sumDist, longitude/sumDist);
 	}
 	
 	public static double checkLongitude(double longitude) {
@@ -353,11 +251,7 @@ public class MapUtils {
 		return (int) ((getTileNumberY(zoom, lat1) - getTileNumberY(zoom, lat2)) * tileSize);
 	}
 	
-	public static void addIdsToList(Collection<? extends Entity> source, List<Long> ids){
-		for(Entity e : source){
-			ids.add(e.getId());
-		}
-	}
+	
 	
 	public static void sortListOfMapObject(List<? extends MapObject> list, final double lat, final double lon){
 		Collections.sort(list, new Comparator<MapObject>() {
@@ -369,15 +263,6 @@ public class MapUtils {
 		});
 	}
 	
-	public static void sortListOfEntities(List<? extends Entity> list, final double lat, final double lon){
-		Collections.sort(list, new Comparator<Entity>() {
-			@Override
-			public int compare(Entity o1, Entity o2) {
-				return Double.compare(MapUtils.getDistance(o1.getLatLon(), lat, lon), MapUtils.getDistance(o2.getLatLon(),
-						lat, lon));
-			}
-		});
-	}
 	
 	// Examples
 //	System.out.println(buildShortOsmUrl(51.51829d, 0.07347d, 16)); // http://osm.org/go/0EEQsyfu

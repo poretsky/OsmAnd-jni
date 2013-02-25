@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.osmand.data.LatLon;
-import net.osmand.util.MapUtils;
 
 public class Way extends Entity {
 	
@@ -138,7 +137,7 @@ public class Way extends Entity {
 		if(nodes == null){
 			return null;
 		}
-		return MapUtils.getWeightCenterForNodes(nodes);
+		return OsmMapUtils.getWeightCenterForNodes(nodes);
 	}
 	
 	
