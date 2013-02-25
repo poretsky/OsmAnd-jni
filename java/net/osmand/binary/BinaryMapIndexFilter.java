@@ -18,7 +18,6 @@ import net.osmand.binary.BinaryMapIndexReader.MapIndex;
 import net.osmand.binary.BinaryMapIndexReader.SearchFilter;
 import net.osmand.binary.BinaryMapIndexReader.SearchRequest;
 import net.osmand.binary.BinaryMapIndexReader.TagValuePair;
-import net.osmand.osm.MapRenderingTypes;
 import net.osmand.render.RenderingRulesStorage;
 import net.osmand.util.MapUtils;
 

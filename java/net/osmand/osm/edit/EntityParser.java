@@ -10,7 +10,6 @@ import net.osmand.data.City;
 import net.osmand.data.City.CityType;
 import net.osmand.data.LatLon;
 import net.osmand.data.MapObject;
-import net.osmand.data.Street;
 import net.osmand.data.TransportStop;
 import net.osmand.osm.MapRenderingTypes;
 import net.osmand.osm.edit.OSMSettings.OSMTagKey;
@@ -111,27 +110,14 @@ public class EntityParser {
 				
 		Collection<String> keySet = entity.getTagKeySet();
 		if (!keySet.isEmpty()) {
-			int shift = 0;
 			for (String t : keySet) {
 				AmenityType type = renderingTypes.getAmenityType(t, entity.getTag(t));
 				if (type != null) {
 					String subtype = renderingTypes.getAmenitySubtype(t, entity.getTag(t));
 					Amenity a = parseAmenity(entity, type, subtype);
 					if(checkAmenitiesToAdd(a, amenitiesList) && !"no".equals(subtype)){
-						amenitiesList.add(shift, a);
-						shift++;
+						amenitiesList.add(a);
 					}
-				} else {
-					type = renderingTypes.getAmenityType(t, null);
-					if (type != null) {
-						String subtype = renderingTypes.getAmenitySubtype(t, entity.getTag(t));
-						Amenity a = parseAmenity(entity, type, subtype);
-						if(checkAmenitiesToAdd(a, amenitiesList) && !"no".equals(subtype)){
-							// 	add amenity to the end
-							amenitiesList.add(a);
-						}
-					}
-					
 				}
 			}
 		}
