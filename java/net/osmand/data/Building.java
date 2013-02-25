@@ -1,8 +1,6 @@
 package net.osmand.data;
 
 
-import net.osmand.osm.Entity;
-import net.osmand.osm.OSMSettings.OSMTagKey;
 import net.osmand.util.Algorithms;
 
 public class Building extends MapObject {
@@ -34,15 +32,6 @@ public class Building extends MapObject {
 		}
 	}
 
-	public Building(Entity e){
-		super(e);
-		// try to extract postcode
-		postcode = e.getTag(OSMTagKey.ADDR_POSTCODE);
-		if(postcode == null) {
-			postcode = e.getTag(OSMTagKey.POSTAL_CODE);
-		}
-	}
-	
 	public Building(){}
 	
 	public String getPostcode() {

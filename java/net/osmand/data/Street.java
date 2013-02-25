@@ -29,19 +29,6 @@ public class Street extends MapObject {
 	public Street(City city) {
 		this.city = city;
 	}
-	public Building registerBuilding(Entity e){
-		return registerBuilding(e, e.getTag(OSMTagKey.ADDR_HOUSE_NUMBER));
-	}
-	
-	public Building registerBuilding(Entity e, String ref){
-		if(ref == null){
-			return null;
-		}
-		Building building = new Building(e);
-		building.setName(ref);
-		buildings.add(building);
-		return building;
-	}
 	
 	public void registerBuilding(Building building){
 		buildings.add(building);
@@ -74,7 +61,7 @@ public class Street extends MapObject {
 		return buildings;
 	}
 	
-	protected void calculateCenter(){
+	public void calculateCenter(){
 		List<Node> nodes = new ArrayList<Node>();
 		if (wayNodes != null) {
 			for (Way w : wayNodes) {
@@ -157,34 +144,19 @@ public class Street extends MapObject {
 		});
 	}
 
-	@Override
-	public void doDataPreparation() {
-		sortBuildings();
-		calculateCenter();
-		if(location == null){
-			List<LatLon> nodes = new ArrayList<LatLon>();
-			for(Building b : buildings){
-				nodes.add(b.getLocation());
-			}
-			location = MapUtils.getWeightCenter(nodes);
-		}
-		if(location == null || ((wayNodes == null || wayNodes.isEmpty()) && buildings.isEmpty())){
-			city.unregisterStreet(name);
-		}
-		if (wayNodes != null && wayNodes.size() > 0) {
-			this.id = wayNodes.get(0).getId();
-		} else if(buildings.size() > 0){
-			this.id = buildings.get(0).getId();
-		}
-		
-	}
-	
 	public int getIndexInCity() {
 		return indexInCity;
 	}
 	
 	public void setIndexInCity(int indexInCity) {
 		this.indexInCity = indexInCity;
+	}
+
+	public void mergeWith(Street street) {
+		if (!street.getWayNodes().isEmpty()) {
+			wayNodes.addAll(street.getWayNodes());
+		}
+		buildings.addAll(street.getBuildings());
 	}
 
 }

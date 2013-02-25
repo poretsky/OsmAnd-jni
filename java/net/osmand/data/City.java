@@ -1,21 +1,13 @@
 package net.osmand.data;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
 import net.osmand.PlatformUtil;
-import net.osmand.osm.Entity;
-import net.osmand.osm.Node;
-import net.osmand.osm.OSMSettings.OSMTagKey;
 import net.osmand.util.Algorithms;
 
-
 public class City extends MapObject {
-	
-	private static long POSTCODE_INTERNAL_ID = -1000;
-
 	public enum CityType {
 		// that's tricky way to play with that numbers (to avoid including suburbs in city & vice verse)
 		// district special type and it is not registered as a city
@@ -54,15 +46,9 @@ public class City extends MapObject {
 	private String isin = null;
 	private String postcode = null;
 
-	public City(Node el) {
-		this(el, CityType.valueFromString(el.getTag(OSMTagKey.PLACE)));
-	}
-	
-	public City(Entity el, CityType t) {
-		super(el);
-		type = t;
-		isin = el.getTag(OSMTagKey.IS_IN);
-		isin = isin != null ? isin.toLowerCase() : null;
+	private static long POSTCODE_INTERNAL_ID = -1000;
+	public static City createPostcode(String postcode){
+		return new City(postcode, POSTCODE_INTERNAL_ID--);
 	}
 
 	public City(CityType type) {
@@ -72,17 +58,11 @@ public class City extends MapObject {
 		this.type = type;
 	}
 	
-	private City(String postcode, long id) {
+	public City(String postcode, long id) {
 		this.type = null;
 		this.name = this.enName = postcode;
 		this.id = id;
 	}
-	
-	public static City createPostcode(String postcode){
-		return new City(postcode, POSTCODE_INTERNAL_ID--);
-	}
-	
-	
 
 	public String getIsInValue() {
 		return isin;
@@ -142,15 +122,6 @@ public class City extends MapObject {
 		return registerStreet(street, false);
 	}
 
-	public Building registerBuilding(Entity e) {
-		String number = e.getTag(OSMTagKey.ADDR_HOUSE_NUMBER);
-		String street = e.getTag(OSMTagKey.ADDR_STREET);
-		if (street != null && number != null) {
-			return registerStreet(street).registerBuilding(e);
-		}
-		return null;
-	}
-
 	public CityType getType() {
 		return type;
 	}
@@ -170,12 +141,9 @@ public class City extends MapObject {
 		}
 		return "City [" + type + "] " + getName(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
-	@Override
-	public void doDataPreparation() {
-		for (Street s : new ArrayList<Street>(getStreets())) {
-			s.doDataPreparation();
-		}
+	
+	public void setIsin(String isin) {
+		this.isin = isin;
 	}
 
 }

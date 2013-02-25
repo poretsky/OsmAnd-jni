@@ -8,7 +8,10 @@
 
 package net.osmand.bridge;
 
-public class StringVector {
+import java.util.AbstractList;
+import java.util.List;
+
+public class StringVector extends AbstractList<String> {
   private long swigCPtr;
   protected boolean swigCMemOwn;
 
@@ -43,8 +46,8 @@ public class StringVector {
     this(CoreOsmAndJNI.new_StringVector__SWIG_1(n), true);
   }
 
-  public long size() {
-    return CoreOsmAndJNI.StringVector_size(swigCPtr, this);
+  public int size() {
+    return (int) CoreOsmAndJNI.StringVector_size(swigCPtr, this);
   }
 
   public long capacity() {
@@ -63,16 +66,19 @@ public class StringVector {
     CoreOsmAndJNI.StringVector_clear(swigCPtr, this);
   }
 
-  public void add(String x) {
+  public boolean add(String x) {
     CoreOsmAndJNI.StringVector_add(swigCPtr, this, x);
+    return true;
   }
 
   public String get(int i) {
     return CoreOsmAndJNI.StringVector_get(swigCPtr, this, i);
   }
 
-  public void set(int i, String val) {
+  public String set(int i, String val) {
+	  String prev = CoreOsmAndJNI.StringVector_get(swigCPtr, this, i);
     CoreOsmAndJNI.StringVector_set(swigCPtr, this, i, val);
+    return prev;
   }
 
 }

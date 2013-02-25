@@ -5,10 +5,6 @@ import net.osmand.osm.Entity;
 public class TransportStop extends MapObject {
 	int[] referencesToRoutes = null;
 	
-	public TransportStop(Entity e){
-		super(e);
-	}
-	
 	public TransportStop(){
 	}
 	

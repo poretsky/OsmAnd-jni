@@ -9,18 +9,12 @@ import net.osmand.osm.Way;
 import net.osmand.util.MapUtils;
 
 public class TransportRoute extends MapObject {
-	private List<Way> ways;
 	private List<TransportStop> forwardStops = new ArrayList<TransportStop>();
 	private List<TransportStop> backwardStops = new ArrayList<TransportStop>();
 	private String ref;
 	private String operator;
 	private String type;
 	private Integer dist = null;
-	
-	public TransportRoute(Relation r, String ref){
-		super(r);
-		this.ref = ref;
-	}
 	
 	public TransportRoute(){
 	}
@@ -31,20 +25,6 @@ public class TransportRoute extends MapObject {
 	
 	public List<TransportStop> getBackwardStops() {
 		return backwardStops;
-	}
-	
-	public List<Way> getWays() {
-		if(ways == null){
-			return Collections.emptyList();
-		}
-		return ways;
-	}
-	
-	public void addWay(Way w){
-		if(ways == null){
-			ways = new ArrayList<Way>();
-		}
-		ways.add(w);
 	}
 	
 	public String getRef() {

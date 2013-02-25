@@ -6,80 +6,15 @@ import java.util.Comparator;
 
 import net.osmand.Collator;
 import net.osmand.PlatformUtil;
-import net.osmand.osm.Entity;
-import net.osmand.osm.Entity.EntityId;
-import net.osmand.osm.Entity.EntityType;
-import net.osmand.osm.OSMSettings.OSMTagKey;
-import net.osmand.util.MapUtils;
 
 
 public abstract class MapObject implements Comparable<MapObject>, Serializable {
-	
-	private static final long serialVersionUID = -9222073549356615466L;
 	protected String name = null;
 	protected String enName = null;
 	protected LatLon location = null;
 	protected int fileOffset = 0;
 	protected Long id = null;
 
-	public MapObject(){}
-	
-	
-	
-	
-	protected EntityType type = null;
-	public MapObject(Entity e){
-		setEntity(e);
-	}
-	
-	public void setEntity(Entity e){
-		this.id = e.getId();
-		this.type = EntityType.valueOf(e);
-		if(this.name == null){
-			this.name = e.getTag(OSMTagKey.NAME);
-		}
-		if (this.enName == null) {
-			this.enName = e.getTag(OSMTagKey.NAME_EN);
-			if(name == null){
-				this.name = this.enName;
-			}
-		}
-		if(this.location == null){
-			this.location = MapUtils.getCenter(e);
-		}
-		if(this.name == null) {
-			this.setNameFromOperator(e);
-		}
-		if(this.name == null) {
-			this.setNameFromRef(e);
-		}
-	}
-
-	public void setNameFromRef(Entity e) {
-		String ref = e.getTag(OSMTagKey.REF);
-		if(ref != null){
-			this.name = ref;
-		}
-	}
-
-	public void setNameFromOperator(Entity e) {
-		String op = e.getTag(OSMTagKey.OPERATOR);
-		if (op == null)
-			return;
-		String ref = e.getTag(OSMTagKey.REF);
-		if (ref != null)
-			op += " [" + ref + "]";
-		this.name = op;
-	}
-	
-	public EntityId getEntityId(){
-		EntityType t = type;
-		if(t == null){
-			t = EntityType.NODE;
-		}
-		return new EntityId(t, id);
-	}
-	
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -132,10 +67,6 @@ public abstract class MapObject implements Comparable<MapObject>, Serializable {
 	@Override
 	public int compareTo(MapObject o) {
 		return PlatformUtil.primaryCollator().compare(getName(), o.getName());
-	}
-	
-	public void doDataPreparation() {
-		
 	}
 	
 	public int getFileOffset() {
