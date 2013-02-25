@@ -1,4 +1,4 @@
-package net.osmand.util;
+package net.osmand.osm.io;
 
 /**
  * @source http://www.javaworld.com/javaworld/javatips/jw-javatip47.html -- 24.11.2008, (mb)
