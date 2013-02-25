@@ -1,7 +1,6 @@
 package net.osmand.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import net.osmand.util.MapUtils;
