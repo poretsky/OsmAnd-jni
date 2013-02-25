@@ -103,15 +103,12 @@ public class EntityParser {
 	
 	public static List<Amenity> parseAmenities(MapRenderingTypes renderingTypes,
 			Entity entity, List<Amenity> amenitiesList){
-		if(entity instanceof Relation){
-			// it could be collection of amenities
-			return amenitiesList;
-		}
-				
+		// it could be collection of amenities
+		boolean relation = entity instanceof Relation;
 		Collection<String> keySet = entity.getTagKeySet();
 		if (!keySet.isEmpty()) {
 			for (String t : keySet) {
-				AmenityType type = renderingTypes.getAmenityType(t, entity.getTag(t));
+				AmenityType type = renderingTypes.getAmenityType(t, entity.getTag(t), relation);
 				if (type != null) {
 					String subtype = renderingTypes.getAmenitySubtype(t, entity.getTag(t));
 					Amenity a = parseAmenity(entity, type, subtype);

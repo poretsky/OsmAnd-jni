@@ -140,16 +140,25 @@ public class MapRenderingTypes {
 		return null;
 	}
 	
-	
 	public AmenityType getAmenityType(String tag, String val){
+		return getAmenityType(tag, val, false);
+	}
+	
+	public AmenityType getAmenityType(String tag, String val, boolean relation){
 		// register amenity types
 		Map<String, AmenityRuleType> rules = getAmenityEncodingRuleTypes();
 		AmenityRuleType rt = rules.get(constructRuleKey(tag, val));
 		if(rt != null && rt.poiSpecified) {
+			if(relation && !rt.relation) {
+				return null;
+			}
 			return rt.poiCategory;
 		}
 		rt = rules.get(constructRuleKey(tag, null));
 		if(rt != null && rt.poiSpecified) {
+			if(relation && !rt.relation) {
+				return null;
+			}
 			return rt.poiCategory;
 		}
 		return null;
@@ -232,6 +241,7 @@ public class MapRenderingTypes {
 		if (poiPrefix != null) {
 			rtype.poiPrefix = poiPrefix;
 		}
+		rtype.relation = Boolean.parseBoolean(parser.getAttributeValue("", "relation"));
 		if (rtype.poiSpecified) {
 			registerAmenityType(rtype.tag, rtype.value, rtype);
 			String targetTag = parser.getAttributeValue("", "target_tag");
@@ -264,6 +274,7 @@ public class MapRenderingTypes {
 			AmenityRuleType rtype = new AmenityRuleType();
 			rtype.poiCategory = AmenityType.valueOf(poiParentCategory.toUpperCase());
 			rtype.poiSpecified = true;
+			rtype.relation = Boolean.parseBoolean(parser.getAttributeValue("", "relation"));
 			rtype.poiPrefix = poiParentPrefix;
 			rtype.tag = tag;
 			registerAmenityType(tag, null, rtype);
@@ -298,6 +309,7 @@ public class MapRenderingTypes {
 		protected String tag;
 		protected String value;
 		protected String poiPrefix;
+		protected boolean relation;
 		protected AmenityType poiCategory;
 		protected boolean poiSpecified;
 		protected AmenityRuleType targetTagValue;
