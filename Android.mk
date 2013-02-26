@@ -13,6 +13,7 @@ OSMAND_JNI_RELATIVE := .
 OSMAND_JNI := $(LOCAL_PATH)/$(OSMAND_JNI_RELATIVE)
 
 LOCAL_C_INCLUDES := \
+	$(QT)/include \
 	$(QT)/include/QtCore \
 	$(LOCAL_PATH)/src \
     $(OSMAND_PROTOBUF)/src \
