@@ -51,7 +51,7 @@ public class BinaryInspector {
 		// test cases show info
 		
 		
-		inspector(new String[]{"-vmap", "-bbox=11.3,47.05,11.4,47", "/home/victor/projects/OsmAnd/data/osm-gen/Austria_2.obf"});
+		//inspector(new String[]{"-vmap", "-bbox=11.3,47.05,11.4,47", "/home/victor/projects/OsmAnd/data/osm-gen/Austria_2.obf"});
 		// test case extract parts
 		// test case 
 	}
@@ -488,10 +488,12 @@ public class BinaryInspector {
 
 	private static void printMapDetailInfo(VerboseInfo verbose, BinaryMapIndexReader index, MapIndex mapIndex) throws IOException {
 		final StringBuilder b = new StringBuilder();
-		SearchRequest<BinaryMapDataObject> req = BinaryMapIndexReader.buildSearchRequest(MapUtils.get31TileNumberX(verbose.lonleft),
+		SearchRequest<BinaryMapDataObject> req = BinaryMapIndexReader.buildSearchRequest(
+				MapUtils.get31TileNumberX(verbose.lonleft),
 				MapUtils.get31TileNumberX(verbose.lonright),
 				MapUtils.get31TileNumberY(verbose.lattop),
-				MapUtils.get31TileNumberY(verbose.latbottom), verbose.getZoom(),
+				MapUtils.get31TileNumberY(verbose.latbottom),
+				-1,//verbose.getZoom(),
 				new SearchFilter() {
 					@Override
 					public boolean accept(TIntArrayList types, MapIndex index) {
@@ -577,10 +579,12 @@ public class BinaryInspector {
 	}
 	
 	private static void printPOIDetailInfo(VerboseInfo verbose, BinaryMapIndexReader index, PoiRegion p) throws IOException {
-		SearchRequest<Amenity> req = BinaryMapIndexReader.buildSearchPoiRequest(MapUtils.get31TileNumberX(verbose.lonleft),
+		SearchRequest<Amenity> req = BinaryMapIndexReader.buildSearchPoiRequest(
+				MapUtils.get31TileNumberX(verbose.lonleft),
 				MapUtils.get31TileNumberX(verbose.lonright),
 				MapUtils.get31TileNumberY(verbose.lattop),
-				MapUtils.get31TileNumberY(verbose.latbottom), verbose.getZoom(),
+				MapUtils.get31TileNumberY(verbose.latbottom),
+				-1,//verbose.getZoom(),
 				new SearchPoiTypeFilter() {
 					@Override
 					public boolean accept(AmenityType type, String subcategory) {
@@ -590,7 +594,7 @@ public class BinaryInspector {
 				new ResultMatcher<Amenity>() {
 					@Override
 					public boolean publish(Amenity object) {
-						println(object.toString() + " " + object.getLocation());
+						println(object.getType().toString() + " : " + object.getSubType() + " " + object.getEnName() + " " + object.getLocation());
 						return false;
 					}
 					@Override
@@ -609,6 +613,7 @@ public class BinaryInspector {
 			for(int j = 0; j < p.subcategories.get(i).size(); j++)
 				println("\t\t\t\t" + p.subcategories.get(i).get(j));
 		}
+		req.poiTypeFilter = null;//TODO: for test only
 		index.searchPoi(p, req);
 		
 	}
