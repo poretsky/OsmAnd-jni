@@ -4,22 +4,19 @@ package net.osmand.binary;
 import net.osmand.binary.BinaryMapRouteReaderAdapter.RouteRegion;
 import net.osmand.binary.BinaryMapRouteReaderAdapter.RouteTypeRule;
 
-public class RouteDataBorderLinePoint {
-	public final RouteRegion region;
+public class RouteDataBorderLinePoint extends RouteDataObject {
 	// all these arrays supposed to be immutable!
 	// These feilds accessible from C++
-	public int[] types;
 	public int x;
 	public int y;
 	public boolean direction;
-	public long id;
 	
 	// used in context calculation
 	public float distanceToStartPoint;
 	public float distanceToEndPoint;
 
 	public RouteDataBorderLinePoint(RouteRegion region) {
-		this.region = region;
+		super(region);
 	}
 	
 	public float getMaximumSpeed(){

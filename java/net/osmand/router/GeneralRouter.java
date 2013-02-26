@@ -106,7 +106,6 @@ public class GeneralRouter extends VehicleRouter {
 		return acceptLine(types, reg);
 	}
 	
-	@Override
 	public boolean acceptLine(int[] types, RouteRegion reg) {
 		if(!highwaySpeed.containsKey(RouteDataObject.getHighway(types, reg))) {
 			boolean accepted = false;
@@ -194,7 +193,7 @@ public class GeneralRouter extends VehicleRouter {
 		if (!isOnewayAware()) {
 			return 0;
 		}
-		return super.isOneWay(road);
+		return road.getOneway();
 	}
 
 	
@@ -316,7 +315,7 @@ public class GeneralRouter extends VehicleRouter {
 	}
 
 	@Override
-	public GeneralRouter specialization(String specializationTag) {
+	public GeneralRouter specifyParameter(String specializationTag) {
 		Map<String, String> attrs = new LinkedHashMap<String, String>(attributes);
 		for(String s : attributes.keySet()){
 			if(s.startsWith(specializationTag +":")) {

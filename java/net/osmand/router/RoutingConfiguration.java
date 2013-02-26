@@ -65,7 +65,7 @@ public class RoutingConfiguration {
 				i.router = routers.get(router);
 				if (specialization != null) {
 					for (String s : specialization) {
-						i.router = i.router.specialization(s);
+						i.router = i.router.specifyParameter(s);
 					}
 				}
 				i.routerName = router;
@@ -147,33 +147,39 @@ public class RoutingConfiguration {
 				String name = parser.getName();
 				if ("osmand_routing_config".equals(name)) {
 					config.defaultRouter = parser.getAttributeValue("", "defaultProfile");
+				} else if ("routingProfile".equals(name)) {
+					currentRouter = parseRoutingProfile(parser, config);
 				} else if ("attribute".equals(name)) {
 					parseAttribute(parser, config, currentRouter);
 					previousKey = parser.getAttributeValue("", "name");
 					previousTag = name;
-				} else if ("routingProfile".equals(name)) {
-					currentRouter = parseRoutingProfile(parser, config);
 				} else if ("specialization".equals(name)) {
 					parseSpecialization(parser, currentRouter, previousKey, previousTag);
 				} else {
 					previousKey = parser.getAttributeValue("", "tag") + "$" + parser.getAttributeValue("", "value");
 					previousTag = name;
-					parseCurrentRule(parser, currentRouter, previousKey, name);
+					if (parseCurrentRule(parser, currentRouter, previousKey, name)) {
+
+					} else {
+
+					}
 				}
 			}
 		}
 		return config;
 	}
 
-	private static void parseCurrentRule(XmlPullParser parser, GeneralRouter currentRouter, String key, String name) {
+	private static boolean parseCurrentRule(XmlPullParser parser, GeneralRouter currentRouter, String key, String name) {
 		if ("road".equals(name)) {
 			currentRouter.highwayPriorities.put(key, parseSilentFloat(parser.getAttributeValue("", "priority"), 1));
 			currentRouter.highwaySpeed.put(key, parseSilentFloat(parser.getAttributeValue("", "speed"), 10));
+			return true;
 		} else if ("obstacle".equals(name)) {
 			float penalty = parseSilentFloat(parser.getAttributeValue("", "penalty"), 0);
 			currentRouter.obstacles.put(key, penalty);
 			float routingPenalty = parseSilentFloat(parser.getAttributeValue("", "routingPenalty"), penalty);
 			currentRouter.routingObstacles.put(key, routingPenalty);
+			return true;
 		} else if ("avoid".equals(name)) {
 			float priority = parseSilentFloat(parser.getAttributeValue("", "decreasedPriority"), 0);
 			if (priority == 0) {
@@ -181,6 +187,9 @@ public class RoutingConfiguration {
 			} else {
 				currentRouter.highwayPriorities.put(key, priority);
 			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 

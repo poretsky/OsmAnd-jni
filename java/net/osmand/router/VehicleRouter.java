@@ -1,6 +1,5 @@
 package net.osmand.router;
 
-import net.osmand.binary.BinaryMapRouteReaderAdapter.RouteRegion;
 import net.osmand.binary.RouteDataObject;
 import net.osmand.router.BinaryRoutePlanner.RouteSegment;
 
@@ -14,25 +13,15 @@ public abstract class VehicleRouter {
 	 */
 	public abstract boolean acceptLine(RouteDataObject way);
 	
-	public abstract boolean acceptLine(int[] types, RouteRegion region);
-	
 	public abstract boolean restrictionsAware();
 
-	
-	public int isOneWay(RouteDataObject road) {
-		return road.getOneway();
-	}
-	
-	public String getHighway(RouteDataObject road) {
-		return road.getHighway();
-	}
+	public abstract int isOneWay(RouteDataObject road);
 	
 	public abstract boolean containsAttribute(String attribute);
 	
 	public abstract String getAttribute(String attribute);
 	
 	
-
 	/**
 	 * return delay in seconds
 	 */
@@ -70,7 +59,7 @@ public abstract class VehicleRouter {
 	 */
 	public abstract float getMaxDefaultSpeed();
 	
-	public abstract VehicleRouter specialization(String tag);
+	public abstract VehicleRouter specifyParameter(String tag);
 
 	/**
 	 * Calculate turn time 

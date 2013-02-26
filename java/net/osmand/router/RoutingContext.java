@@ -296,7 +296,7 @@ public class RoutingContext {
 		}
 		TIntObjectHashMap<RouteDataBorderLine> lines = new TIntObjectHashMap<RoutingContext.RouteDataBorderLine>();
 		for(RouteDataBorderLinePoint p : req.getSearchResults()) {
-			if(config.router.acceptLine(p.types, p.region) && p.x > leftBorderBoundary && p.x < rightBorderBoundary) {
+			if(config.router.acceptLine(p) && p.x > leftBorderBoundary && p.x < rightBorderBoundary) {
 				if(!lines.containsKey(p.y)) {
 					RouteDataBorderLine line = new RouteDataBorderLine(p.y);
 					lines.put(p.y, line);
