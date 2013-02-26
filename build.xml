@@ -38,7 +38,12 @@
 	  		<include name="**/*.java"/>
 			<exclude name="net/osmand/plus/**"/>
 		</javac>
+		
+	</target>
+	
+	<target name="native-libs-jar" depends="compile">
 		<exec command="bash collect_libs.sh" failonerror="true"></exec>
+		<antcall target="jar"/>
 	</target>
 
 	<target name="jar" depends="compile">
