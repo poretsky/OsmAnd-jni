@@ -149,6 +149,9 @@ public class EntityParser {
 	}
 	
 	public static City parseCity(Entity el, CityType t) {
+		if(t == null) {
+			return null;
+		}
 		City c = new City(t);
 		parseMapObject(c, el);
 		String isin = el.getTag(OSMTagKey.IS_IN);
