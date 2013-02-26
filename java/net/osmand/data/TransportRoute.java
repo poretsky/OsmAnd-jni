@@ -1,11 +1,8 @@
 package net.osmand.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import net.osmand.osm.edit.Relation;
-import net.osmand.osm.edit.Way;
 import net.osmand.util.MapUtils;
 
 public class TransportRoute extends MapObject {

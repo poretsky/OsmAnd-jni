@@ -76,12 +76,6 @@ public class City extends MapObject {
 		return streets.isEmpty();
 	}
 
-	public Street registerStreet(String street) {
-		if (!streets.containsKey(street.toLowerCase())) {
-			streets.put(street.toLowerCase(), new Street(this, street));
-		}
-		return streets.get(street.toLowerCase());
-	}
 
 	public Street unregisterStreet(String name) {
 		return streets.remove(name.toLowerCase());

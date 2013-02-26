@@ -677,6 +677,14 @@
 		<type tag="boundary" value="national_park" minzoom="7" />
 		<type tag="boundary" value="protected_area" minzoom="7" />
 	</category>
+	
+	<category name="enforcement" poi_category="transportation" poi_prefix="enforcement_" relation="true" relationRole="to">
+		<type tag="enforcement" value="traffic_signals" minzoom="15" relation="true" relationRole="to"/>
+		<type tag="enforcement" value="maxspeed" minzoom="15" relation="true" relationRole="to"/>
+		<type tag="enforcement" value="maxheight" minzoom="15" relation="true" relationRole="to"/>
+		<type tag="enforcement" value="mindistance" minzoom="15" relation="true" relationRole="to"/>
+		<type tag="enforcement" value="check" minzoom="15" relation="true" relationRole="to"/>
+	</category>
 
 
 	<!-- sport -->
@@ -772,6 +780,7 @@
 		<routing_type tag="bus" mode="amend"/>
 		<routing_type tag="construction" mode="amend"/>
 		<routing_type tag="direction" mode="amend"/>
+		<routing_type tag="enforcement" mode="amend"/>
 		<routing_type tag="ferry" mode="amend"/>
 		<routing_type tag="foot" mode="amend"/>
 		<routing_type tag="goods" mode="amend"/>

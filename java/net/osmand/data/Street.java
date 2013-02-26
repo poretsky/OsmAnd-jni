@@ -5,32 +5,20 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import net.osmand.osm.edit.Entity;
-import net.osmand.osm.edit.Node;
-import net.osmand.osm.edit.Way;
-import net.osmand.osm.edit.OSMSettings.OSMTagKey;
 import net.osmand.util.Algorithms;
-import net.osmand.util.MapUtils;
 
 
 public class Street extends MapObject {
 	
-	private List<Building> buildings = new ArrayList<Building>(); 
-	private List<Way> wayNodes = null;
-	private List<Street> intersectedStreets = null;
-	private final City city;
-	private int indexInCity = -1;
+	protected List<Building> buildings = new ArrayList<Building>(); 
+	protected List<Street> intersectedStreets = null;
+	protected final City city;
 
-	public Street(City city, String name){
-		this.city = city;
-		this.name = name;
-	}
-	
 	public Street(City city) {
 		this.city = city;
 	}
 	
-	public void registerBuilding(Building building){
+	public void addBuilding(Building building){
 		buildings.add(building);
 	}
 	
@@ -48,7 +36,7 @@ public class Street extends MapObject {
 		intersectedStreets.add(s);
 	}
 	
-	public void registerBuildingCheckById(Building building){
+	public void addBuildingCheckById(Building building){
 		for(Building b : buildings) {
 			if(b.getId().longValue() == building.getId().longValue()){
 				return;
@@ -61,31 +49,6 @@ public class Street extends MapObject {
 		return buildings;
 	}
 	
-	public void calculateCenter(){
-		List<Node> nodes = new ArrayList<Node>();
-		if (wayNodes != null) {
-			for (Way w : wayNodes) {
-				nodes.addAll(w.getNodes());
-			}
-		}
-		
-		LatLon c = MapUtils.getWeightCenterForNodes(nodes);
-		double dist = Double.POSITIVE_INFINITY;
-		for(Node n : nodes){
-			if (n != null) {
-				double nd = MapUtils.getDistance(n, c);
-				if (nd < dist) {
-					dist = nd;
-					location = n.getLatLon();
-				}
-			}
-		}
-	}
-	
-	public boolean isRegisteredInCity(){
-		return city != null && city.getStreet(getName()) == this;
-	}
-	
 	@Override
 	public void setName(String name) {
 		if (name.equals(getName())) {
@@ -95,10 +58,6 @@ public class Street extends MapObject {
 			city.unregisterStreet(getName());
 			super.setName(name);
 			Street s = city.registerStreet(this);
-			if(s != this){
-				// that case means that street unregistered
-//				city = null;
-			}
 		} else {
 			super.setName(name);
 		}
@@ -112,14 +71,6 @@ public class Street extends MapObject {
 		}
 		return nm;
 		
-	}
-	
-	
-	public List<Way> getWayNodes() {
-		if(wayNodes == null){
-			wayNodes = new ArrayList<Way>();
-		}
-		return wayNodes;
 	}
 	
 	public City getCity() {
@@ -144,18 +95,7 @@ public class Street extends MapObject {
 		});
 	}
 
-	public int getIndexInCity() {
-		return indexInCity;
-	}
-	
-	public void setIndexInCity(int indexInCity) {
-		this.indexInCity = indexInCity;
-	}
-
 	public void mergeWith(Street street) {
-		if (!street.getWayNodes().isEmpty()) {
-			wayNodes.addAll(street.getWayNodes());
-		}
 		buildings.addAll(street.getBuildings());
 	}
 

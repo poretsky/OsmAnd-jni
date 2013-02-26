@@ -2,7 +2,6 @@ package net.osmand.binary;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.osmand.binary.BinaryMapIndexReader.MapIndex;
-import net.osmand.osm.MapRenderingTypes;
 import net.osmand.render.RenderingRulesStorage;
 
 public class BinaryMapDataObject {

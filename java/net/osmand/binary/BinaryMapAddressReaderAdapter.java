@@ -322,7 +322,7 @@ public class BinaryMapAddressReaderAdapter {
 					Building b = readBuilding(offset, x, y);
 					if (postcodeFilter == null || postcodeFilter.equalsIgnoreCase(b.getPostcode())) {
 						if (buildingsMatcher == null || buildingsMatcher.publish(b)) {
-							s.registerBuilding(b);
+							s.addBuilding(b);
 						}
 					}
 					codedIS.popLimit(oldLimit);

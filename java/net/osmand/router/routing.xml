@@ -119,8 +119,8 @@
 		<obstacle tag="highway" value="give_way" penalty="7"/>
 		<obstacle tag="highway" value="ford" penalty="25"/>
 		<obstacle tag="ford" value="" penalty="25"/>
-		<obstacle tag="railway" value="crossing" penalty="25"/>
-		<obstacle tag="railway" value="level_crossing" penalty="25"/>
+		<obstacle tag="railway" value="crossing" penalty="25" routingPenalty="5"/>
+		<obstacle tag="railway" value="level_crossing" penalty="25" routingPenalty="5"/>
 		<obstacle tag="motorcar" value="no" penalty="-1"/>
 		<obstacle tag="barrier" value="bollard" routingPenalty="1000" penalty="25"/>
 		<obstacle tag="barrier" value="gate" routingPenalty="1000" penalty="25"/>
@@ -194,8 +194,8 @@
 		<obstacle tag="highway" value="give_way" penalty="7"/>
 		<obstacle tag="highway" value="ford" penalty="15"/>
 		<obstacle tag="ford" value="" penalty="15"/>
-		<obstacle tag="railway" value="crossing" penalty="15"/>
-		<obstacle tag="railway" value="level_crossing" penalty="15"/>
+		<obstacle tag="railway" value="crossing" penalty="5"/>
+		<obstacle tag="railway" value="level_crossing" penalty="5"/>
 		<obstacle tag="barrier" value="cycle_barrier" penalty="10"/>
 
 		<avoid tag="surface" value="gravel" decreasedPriority="0.2"/>

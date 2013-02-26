@@ -3,16 +3,13 @@ package net.osmand.osm;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-
 
 import net.osmand.PlatformUtil;
 import net.osmand.data.AmenityType;
@@ -23,17 +20,11 @@ import org.xmlpull.v1.XmlPullParserException;
 
 /**
  * reference : http://wiki.openstreetmap.org/wiki/Map_Features
- * Describing types of polygons :
- * 1. Last 2 bits define type of element : polygon, polyline, point 
  */
 public class MapRenderingTypes {
 
 	private static final Log log = PlatformUtil.getLog(MapRenderingTypes.class);
 	
-	
-	private static char TAG_DELIMETER = '/'; //$NON-NLS-1$
-	
-	private String resourceName = null;
 	public final static byte RESTRICTION_NO_RIGHT_TURN = 1;
 	public final static byte RESTRICTION_NO_LEFT_TURN = 2;
 	public final static byte RESTRICTION_NO_U_TURN = 3;
@@ -42,19 +33,13 @@ public class MapRenderingTypes {
 	public final static byte RESTRICTION_ONLY_LEFT_TURN = 6;
 	public final static byte RESTRICTION_ONLY_STRAIGHT_ON = 7;
 	
-
-	// stored information to convert from osm tags to int type
-	private Map<String, MapRulType> types = null;
-	private List<MapRulType> typeList = new ArrayList<MapRenderingTypes.MapRulType>();
-	private List<MapRouteTag> routeTags = new ArrayList<MapRenderingTypes.MapRouteTag>();
+	private static char TAG_DELIMETER = '/'; //$NON-NLS-1$
 	
+	private String resourceName = null;
 	private Map<AmenityType, Map<String, String>> amenityTypeNameToTagVal = null;
 	private Map<String, AmenityType> amenityNameToType = null;
-	
+	private Map<String, AmenityRuleType> amenityTypes = null;
 
-	private MapRulType nameRuleType;
-	private MapRulType coastlineRuleType;
-	
 	public MapRenderingTypes(String fileName){
 		this.resourceName = fileName;
 	}
@@ -68,66 +53,23 @@ public class MapRenderingTypes {
 		return DEFAULT_INSTANCE;
 	}
 
-	public Map<String, MapRulType> getEncodingRuleTypes(){
+	private Map<String, AmenityRuleType> getAmenityEncodingRuleTypes(){
 		checkIfInitNeeded();
-		return types;
+		return amenityTypes;
 	}
-
-	private void checkIfInitNeeded() {
-		if (types == null) {
-			types = new LinkedHashMap<String, MapRulType>();
-			typeList.clear();
-			nameRuleType = new MapRulType();
-			nameRuleType.tag = "name";
-			nameRuleType.onlyNameRef = true;
-			nameRuleType.additional = false; 
-			registerRuleType("name", null, nameRuleType);
+	
+	protected void checkIfInitNeeded() {
+		if(amenityTypes == null) {
+			amenityTypes = new LinkedHashMap<String, MapRenderingTypes.AmenityRuleType>();
 			init();
 		}
 	}
-	
-	public MapRulType getTypeByInternalId(int id) {
-		return typeList.get(id);
-	}
-	
-	private MapRulType registerRuleType(String tag, String val, MapRulType rt){
-		String keyVal = constructRuleKey(tag, val);
-		if("natural".equals(tag) && "coastline".equals(val)) {
-			coastlineRuleType = rt;
-		}
-		if(types.containsKey(keyVal)){
-			if(types.get(keyVal).onlyNameRef ) {
-				rt.id = types.get(keyVal).id;
-				types.put(keyVal, rt);
-				typeList.set(rt.id, rt);
-				return rt;
-			} else {
-				throw new RuntimeException("Duplicate " + keyVal);
-			}
-		} else {
-			rt.id = types.size();
-			types.put(keyVal, rt);
-			typeList.add(rt);
-			return rt;
-		}
-	}
-	
-	public MapRulType getNameRuleType() {
-		getEncodingRuleTypes();
-		return nameRuleType;
-	}
-	
-	public MapRulType getCoastlineRuleType() {
-		getEncodingRuleTypes();
-		return coastlineRuleType;
-	}
-	
-	
+
 	public Map<AmenityType, Map<String, String>> getAmenityTypeNameToTagVal() {
 		if (amenityTypeNameToTagVal == null) {
-			Map<String, MapRulType> types = getEncodingRuleTypes();
+			Map<String, AmenityRuleType> types = getAmenityEncodingRuleTypes();
 			amenityTypeNameToTagVal = new LinkedHashMap<AmenityType, Map<String, String>>();
-			for(MapRulType type : types.values()){
+			for(AmenityRuleType type : types.values()){
 				if(type.poiCategory != null && type.targetTagValue == null) {
 					if(!amenityTypeNameToTagVal.containsKey(type.poiCategory)) {
 						amenityTypeNameToTagVal.put(type.poiCategory, new TreeMap<String, String>());
@@ -146,6 +88,7 @@ public class MapRenderingTypes {
 		}
 		return amenityTypeNameToTagVal;
 	}
+	
 	
 	public Map<String, AmenityType> getAmenityNameToType(){
 		if(amenityNameToType == null){
@@ -167,7 +110,62 @@ public class MapRenderingTypes {
 		return amenityNameToType; 
 	}
 	
-	private void init(){
+	public Collection<String> getAmenitySubCategories(AmenityType t){
+		Map<AmenityType, Map<String, String>> amenityTypeNameToTagVal = getAmenityTypeNameToTagVal();
+		if(!amenityTypeNameToTagVal.containsKey(t)){
+			return Collections.emptyList(); 
+		}
+		return amenityTypeNameToTagVal.get(t).keySet();
+	}
+	
+	
+	public String getAmenitySubtype(String tag, String val){
+		String prefix = getAmenitySubtypePrefix(tag, val);
+		if(prefix != null){
+			return prefix + val;
+		}
+		return val;
+	}
+	
+	public String getAmenitySubtypePrefix(String tag, String val){
+		Map<String, AmenityRuleType> rules = getAmenityEncodingRuleTypes();
+		AmenityRuleType rt = rules.get(constructRuleKey(tag, val));
+		if(rt != null && rt.poiPrefix != null) {
+			return rt.poiPrefix;
+		}
+		rt = rules.get(constructRuleKey(tag, null));
+		if(rt != null && rt.poiPrefix != null) {
+			return rt.poiPrefix;
+		}
+		return null;
+	}
+	
+	public AmenityType getAmenityType(String tag, String val){
+		return getAmenityType(tag, val, false);
+	}
+	
+	public AmenityType getAmenityType(String tag, String val, boolean relation){
+		// register amenity types
+		Map<String, AmenityRuleType> rules = getAmenityEncodingRuleTypes();
+		AmenityRuleType rt = rules.get(constructRuleKey(tag, val));
+		if(rt != null && rt.poiSpecified) {
+			if(relation && !rt.relation) {
+				return null;
+			}
+			return rt.poiCategory;
+		}
+		rt = rules.get(constructRuleKey(tag, null));
+		if(rt != null && rt.poiSpecified) {
+			if(relation && !rt.relation) {
+				return null;
+			}
+			return rt.poiCategory;
+		}
+		return null;
+	}
+
+	
+	protected void init(){
 		InputStream is;
 		try {
 			if(resourceName == null){
@@ -187,15 +185,7 @@ public class MapRenderingTypes {
 					if (name.equals("category")) { //$NON-NLS-1$
 						poiParentCategory = parser.getAttributeValue("","poi_category");
 						poiParentPrefix = parser.getAttributeValue("","poi_prefix");
-						String tag = parser.getAttributeValue("","poi_tag");
-						if (tag != null) {
-							MapRulType rtype = new MapRulType();
-							rtype.poiCategory = AmenityType.valueOf(poiParentCategory.toUpperCase());
-							rtype.poiSpecified = true;
-							rtype.poiPrefix = poiParentPrefix;
-							rtype.tag = tag;
-							registerRuleType(tag, null, rtype);
-						}
+						parseCategoryFromXml(parser, poiParentCategory, poiParentPrefix);
 					} else if (name.equals("type")) {
 						parseTypeFromXML(parser, poiParentCategory, poiParentPrefix);
 					} else if (name.equals("routing_type")) {
@@ -203,7 +193,6 @@ public class MapRenderingTypes {
 					}
 				}
 			}
-			
 			log.info("Time to init " + (System.currentTimeMillis() - time)); //$NON-NLS-1$
 			is.close();
 		} catch (IOException e) {
@@ -221,81 +210,15 @@ public class MapRenderingTypes {
 		}
 	}
 
-	private void parseRouteTagFromXML(XmlPullParser parser) {
-		MapRouteTag rtype = new MapRouteTag();
-		String mode = parser.getAttributeValue("", "mode"); //$NON-NLS-1$
-		rtype.tag = parser.getAttributeValue("", "tag"); //$NON-NLS-1$
-		rtype.value = parser.getAttributeValue("", "value"); //$NON-NLS-1$
-		rtype.base = Boolean.parseBoolean(parser.getAttributeValue("", "base"));
-		rtype.register = "register".equalsIgnoreCase(mode);
-		rtype.amend = "amend".equalsIgnoreCase(mode);
-		rtype.text = "text".equalsIgnoreCase(mode);
-		rtype.relation = "relation".equalsIgnoreCase(parser.getAttributeValue("", "relation"));
-		routeTags.add(rtype);
-	}
-	
-	public List<MapRouteTag> getRouteTags() {
-		checkIfInitNeeded();
-		return routeTags;
+	protected void parseRouteTagFromXML(XmlPullParser parser) {
 	}
 
-	private void parseTypeFromXML(XmlPullParser parser, String poiParentCategory, String poiParentPrefix) {
-		MapRulType rtype = new MapRulType();
-		String val = parser.getAttributeValue("", "minzoom"); //$NON-NLS-1$
-		rtype.minzoom = 15;
-		if (val != null) {
-			rtype.minzoom = Integer.parseInt(val);
-		}
+	protected void parseTypeFromXML(XmlPullParser parser, String poiParentCategory, String poiParentPrefix) {
+		AmenityRuleType rtype = new AmenityRuleType();
 		rtype.tag = parser.getAttributeValue("", "tag"); //$NON-NLS-1$
 		rtype.value = parser.getAttributeValue("", "value"); //$NON-NLS-1$
 		if (rtype.value != null && rtype.value.length() == 0) { //$NON-NLS-1$
 			rtype.value = null;
-		}
-		registerRuleType(rtype.tag, rtype.value, rtype);
-		rtype.additional = Boolean.parseBoolean(parser.getAttributeValue("", "additional")); //$NON-NLS-1$
-		rtype.relation = Boolean.parseBoolean(parser.getAttributeValue("", "relation")); //$NON-NLS-1$
-		rtype.namePrefix = parser.getAttributeValue("", "namePrefix"); //$NON-NLS-1$
-		rtype.nameCombinator = parser.getAttributeValue("", "nameCombinator"); //$NON-NLS-1$
-		if(rtype.namePrefix == null){
-			rtype.namePrefix = "";
-		}
-		
-		String v = parser.getAttributeValue("", "nameTags");
-		if (v != null) {
-			String[] names = v.split(",");
-			if (names.length == 0) {
-				names = new String[] { "name" };
-			}
-			rtype.names = new MapRulType[names.length];
-			for (int i = 0; i < names.length; i++) {
-				String tagName = names[i];
-				if(rtype.namePrefix.length() > 0) {
-					tagName = rtype.namePrefix + tagName;
-				}
-				MapRulType mt = types.get(constructRuleKey(tagName, null));
-				if (mt == null) {
-					mt = new MapRulType();
-					mt.tag = tagName;
-					mt.onlyNameRef = true;
-					mt.additional = false;
-					registerRuleType(tagName, null, mt);
-				}
-				rtype.names[i] = mt;
-			}
-		}
-		String targetTag = parser.getAttributeValue("", "target_tag");
-		String targetValue = parser.getAttributeValue("", "target_value");
-		if (targetTag != null || targetValue != null) {
-			if (targetTag == null) {
-				targetTag = rtype.tag;
-			}
-			if (targetValue == null) {
-				targetValue = rtype.value;
-			}
-			rtype.targetTagValue = types.get(constructRuleKey(targetTag, targetValue));
-			if (rtype.targetTagValue == null) {
-				throw new RuntimeException("Illegal target tag/value " + targetTag + " " + targetValue);
-			}
 		}
 		if (poiParentCategory != null) {
 			rtype.poiCategory = AmenityType.valueOf(poiParentCategory.toUpperCase());
@@ -318,9 +241,47 @@ public class MapRenderingTypes {
 		if (poiPrefix != null) {
 			rtype.poiPrefix = poiPrefix;
 		}
+		rtype.relation = Boolean.parseBoolean(parser.getAttributeValue("", "relation"));
+		if (rtype.poiSpecified) {
+			registerAmenityType(rtype.tag, rtype.value, rtype);
+			String targetTag = parser.getAttributeValue("", "target_tag");
+			String targetValue = parser.getAttributeValue("", "target_value");
+			if (targetTag != null || targetValue != null) {
+				if (targetTag == null) {
+					targetTag = rtype.tag;
+				}
+				if (targetValue == null) {
+					targetValue = rtype.value;
+				}
+				rtype.targetTagValue = amenityTypes.get(constructRuleKey(targetTag, targetValue));
+			}
+		}
+	}
+
+	private AmenityRuleType registerAmenityType(String tag, String val, AmenityRuleType rt) {
+		String keyVal = constructRuleKey(tag, val);
+		if (amenityTypes.containsKey(keyVal)) {
+			throw new RuntimeException("Duplicate " + keyVal);
+		} else {
+			amenityTypes.put(keyVal, rt);
+			return rt;
+		}
+	}
+
+	protected void parseCategoryFromXml(XmlPullParser parser, String poiParentCategory, String poiParentPrefix) {
+		String tag = parser.getAttributeValue("","poi_tag");
+		if (tag != null) {
+			AmenityRuleType rtype = new AmenityRuleType();
+			rtype.poiCategory = AmenityType.valueOf(poiParentCategory.toUpperCase());
+			rtype.poiSpecified = true;
+			rtype.relation = Boolean.parseBoolean(parser.getAttributeValue("", "relation"));
+			rtype.poiPrefix = poiParentPrefix;
+			rtype.tag = tag;
+			registerAmenityType(tag, null, rtype);
+		}
 	}
 	
-	public static String constructRuleKey(String tag, String val) {
+	protected static String constructRuleKey(String tag, String val) {
 		if(val == null || val.length() == 0){
 			return tag;
 		}
@@ -343,145 +304,15 @@ public class MapRenderingTypes {
 		return null;
 	}
 	
-	public String getAmenitySubtypePrefix(String tag, String val){
-		Map<String, MapRulType> rules = getEncodingRuleTypes();
-		MapRulType rt = rules.get(constructRuleKey(tag, val));
-		if(rt != null && rt.poiPrefix != null) {
-			return rt.poiPrefix;
-		}
-		rt = rules.get(constructRuleKey(tag, null));
-		if(rt != null && rt.poiPrefix != null) {
-			return rt.poiPrefix;
-		}
-		return null;
-	}
-	
-	public String getAmenitySubtype(String tag, String val){
-		String prefix = getAmenitySubtypePrefix(tag, val);
-		if(prefix != null){
-			return prefix + val;
-		}
-		return val;
-	}
-	
-	public AmenityType getAmenityType(String tag, String val){
-		// register amenity types
-		Map<String, MapRulType> rules = getEncodingRuleTypes();
-		MapRulType rt = rules.get(constructRuleKey(tag, val));
-		if(rt != null && rt.poiSpecified) {
-			return rt.poiCategory;
-		}
-		rt = rules.get(constructRuleKey(tag, null));
-		if(rt != null && rt.poiSpecified) {
-			return rt.poiCategory;
-		}
-		return null;
-	}
-	
-	public static class MapRouteTag {
-		boolean relation;
-		String tag;
-		String value;
-		boolean register;
-		boolean amend;
-		boolean base; 
-		boolean text;
 		
-	}
-	
-	public static class MapRulType {
-		protected MapRulType[] names;
+	private static class AmenityRuleType {
 		protected String tag;
 		protected String value;
-		protected int minzoom;
-		protected boolean additional;
-		protected boolean relation;
-		protected MapRulType targetTagValue;
-		protected boolean onlyNameRef;
-		
-		// inner id
-		protected int id;
-		protected int freq;
-		protected int targetId;
-		
 		protected String poiPrefix;
-		protected String namePrefix ="";
-		protected String nameCombinator = null;
+		protected boolean relation;
 		protected AmenityType poiCategory;
 		protected boolean poiSpecified;
-		
-		
-		public MapRulType(){
-		}
-		
-		public String poiPrefix(){
-			return poiPrefix;
-		}
-		
-		public AmenityType getPoiCategory() {
-			return poiCategory;
-		}
-		
-		public String getTag() {
-			return tag;
-		}
-		
-		public int getTargetId() {
-			return targetId;
-		}
-		
-		public int getInternalId() {
-			return id;
-		}
-		
-		public void setTargetId(int targetId) {
-			this.targetId = targetId;
-		}
-		
-		public MapRulType getTargetTagValue() {
-			return targetTagValue;
-		}
-		
-		public String getValue() {
-			return value;
-		}
-		
-		public int getMinzoom() {
-			return minzoom;
-		}
-		
-		public boolean isAdditional() {
-			return additional;
-		}
-		
-		public boolean isOnlyNameRef() {
-			return onlyNameRef;
-		}
-		
-		public boolean isRelation() {
-			return relation;
-		}
-		
-		public int getFreq() {
-			return freq;
-		}
-		
-		public int updateFreq(){
-			return ++freq;
-		}
-		
-		@Override
-		public String toString() {
-			return tag + " " + value;
-		}
-	}
-	
-	public Collection<String> getAmenitySubCategories(AmenityType t){
-		Map<AmenityType, Map<String, String>> amenityTypeNameToTagVal = getAmenityTypeNameToTagVal();
-		if(!amenityTypeNameToTagVal.containsKey(t)){
-			return Collections.emptyList(); 
-		}
-		return amenityTypeNameToTagVal.get(t).keySet();
+		protected AmenityRuleType targetTagValue;
 	}
 	
 }
