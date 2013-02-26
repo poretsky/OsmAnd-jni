@@ -3,11 +3,18 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 OSMAND_PROTOBUF := $(LOCAL_PATH)/../core/externals/protobuf/upstream.patched
+ifeq ($(OSMAND_BUILDING_NEON_LIBRARY),true)
+	QT := $(LOCAL_PATH)/../core/externals/qtbase-android/upstream.patched.$(TARGET_ARCH_ABI)-neon
+else
+	QT := $(LOCAL_PATH)/../core/externals/qtbase-android/upstream.patched.$(TARGET_ARCH_ABI)
+endif
 OSMAND_CORE := $(LOCAL_PATH)/../core
 OSMAND_JNI_RELATIVE := .
 OSMAND_JNI := $(LOCAL_PATH)/$(OSMAND_JNI_RELATIVE)
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/src \
+LOCAL_C_INCLUDES := \
+	$(QT)/include/QtCore \
+	$(LOCAL_PATH)/src \
     $(OSMAND_PROTOBUF)/src \
 	$(OSMAND_CORE)/include \
 	$(OSMAND_CORE)/protos \
