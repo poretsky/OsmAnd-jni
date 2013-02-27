@@ -763,18 +763,19 @@ public class BinaryMapIndexReader {
 		req.numberOfReadSubtrees = 0;
 		List<MapTree> foundSubtrees = new ArrayList<MapTree>();
 		for (MapIndex mapIndex : mapIndexes) {
+			// lazy initializing rules
+			if(mapIndex.encodingRules.isEmpty()) {
+				codedIS.seek(mapIndex.filePointer);
+				int oldLimit = codedIS.pushLimit(mapIndex.length);
+				readMapIndex(mapIndex, true);
+				codedIS.popLimit(oldLimit);
+			}
 			for (MapRoot index : mapIndex.getRoots()) {
 				if (index.minZoom <= req.zoom && index.maxZoom >= req.zoom) {
 					if (index.right < req.left || index.left > req.right || index.top > req.bottom || index.bottom < req.top) {
 						continue;
 					}
-					// lazy initializing rules
-					if(mapIndex.encodingRules.isEmpty()) {
-						codedIS.seek(mapIndex.filePointer);
-						int oldLimit = codedIS.pushLimit(mapIndex.length);
-						readMapIndex(mapIndex, true);
-						codedIS.popLimit(oldLimit);
-					}
+					
 					// lazy initializing trees
 					if(index.trees == null){
 						index.trees = new ArrayList<MapTree>();
@@ -827,34 +828,36 @@ public class BinaryMapIndexReader {
 		req.numberOfReadSubtrees = 0;
 		List<MapTree> foundSubtrees = new ArrayList<MapTree>();
 		
-		for (MapRoot index : mapIndex.getRoots()) {
-			if (index.minZoom <= req.zoom && index.maxZoom >= req.zoom) {
-				if (index.right < req.left || index.left > req.right || index.top > req.bottom || index.bottom < req.top) {
+		// lazy initializing rules
+		if(mapIndex.encodingRules.isEmpty()) {
+			codedIS.seek(mapIndex.filePointer);
+			int oldLimit = codedIS.pushLimit(mapIndex.length);
+			readMapIndex(mapIndex, true);
+			codedIS.popLimit(oldLimit);
+		}
+		
+		for (MapRoot level : mapIndex.getRoots()) {
+			if ((level.minZoom <= req.zoom && level.maxZoom >= req.zoom) || req.zoom == -1) {
+				if (level.right < req.left || level.left > req.right || level.top > req.bottom || level.bottom < req.top) {
 					continue;
 				}
-				// lazy initializing rules
-				if(mapIndex.encodingRules.isEmpty()) {
-					codedIS.seek(mapIndex.filePointer);
-					int oldLimit = codedIS.pushLimit(mapIndex.length);
-					readMapIndex(mapIndex, true);
-					codedIS.popLimit(oldLimit);
-				}
+				
 				// lazy initializing trees
-				if(index.trees == null){
-					index.trees = new ArrayList<MapTree>();
-					codedIS.seek(index.filePointer);
-					int oldLimit = codedIS.pushLimit(index.length);
-					readMapLevel(index);
+				if(level.trees == null){
+					level.trees = new ArrayList<MapTree>();
+					codedIS.seek(level.filePointer);
+					int oldLimit = codedIS.pushLimit(level.length);
+					readMapLevel(level);
 					codedIS.popLimit(oldLimit);
 				}
 				
-				for (MapTree tree : index.trees) {
+				for (MapTree tree : level.trees) {
 					if (tree.right < req.left || tree.left > req.right || tree.top > req.bottom || tree.bottom < req.top) {
 						continue;
 					}
 					codedIS.seek(tree.filePointer);
 					int oldLimit = codedIS.pushLimit(tree.length);
-					searchMapTreeBounds(tree, index, req, foundSubtrees);
+					searchMapTreeBounds(tree, level, req, foundSubtrees);
 					codedIS.popLimit(oldLimit);
 				}
 				

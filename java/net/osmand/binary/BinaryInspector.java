@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.ref.Reference;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,6 +74,7 @@ public class BinaryInspector {
 		boolean vtransport;
 		boolean vpoi;
 		boolean vmap;
+		boolean vmapObjects;
 		double lattop = 85;
 		double latbottom = -85;
 		double lonleft = -180;
@@ -112,6 +114,8 @@ public class BinaryInspector {
 					vintersections = true;
 				} else if(params[i].equals("-vmap")){
 					vmap = true;
+				} else if(params[i].equals("-vmapobjects")){
+					vmapObjects = true;
 				} else if(params[i].equals("-vpoi")){
 					vpoi = true;
 				} else if(params[i].equals("-vtransport")){
@@ -485,9 +489,13 @@ public class BinaryInspector {
 			}
 		}
 	}
-
-	private static void printMapDetailInfo(VerboseInfo verbose, BinaryMapIndexReader index, MapIndex mapIndex) throws IOException {
+	private static class DamnCounter
+	{
+		int value;
+	}
+	private static void printMapDetailInfo(final VerboseInfo verbose, BinaryMapIndexReader index, MapIndex mapIndex) throws IOException {
 		final StringBuilder b = new StringBuilder();
+		final DamnCounter mapObjectsCounter = new DamnCounter();
 		SearchRequest<BinaryMapDataObject> req = BinaryMapIndexReader.buildSearchRequest(
 				MapUtils.get31TileNumberX(verbose.lonleft),
 				MapUtils.get31TileNumberX(verbose.lonright),
@@ -503,71 +511,75 @@ public class BinaryInspector {
 				new ResultMatcher<BinaryMapDataObject>() {
 					@Override
 					public boolean publish(BinaryMapDataObject obj) {
-						b.setLength(0);
-						boolean multipolygon = obj.getPolygonInnerCoordinates() != null && obj.getPolygonInnerCoordinates().length > 0;
-						if(multipolygon ) {
-							b.append("Multipolygon");
-						} else {
-							b.append(obj.area? "Area" : (obj.getPointsLength() > 1? "Way" : "Point"));
-						}
-						int[] types = obj.getTypes();
-						b.append(" types [");
-						for(int j = 0; j<types.length; j++){
-							if(j > 0) {
-								b.append(", ");
+						mapObjectsCounter.value++;
+						if(verbose.vmapObjects)
+						{
+							b.setLength(0);
+							boolean multipolygon = obj.getPolygonInnerCoordinates() != null && obj.getPolygonInnerCoordinates().length > 0;
+							if(multipolygon ) {
+								b.append("Multipolygon");
+							} else {
+								b.append(obj.area? "Area" : (obj.getPointsLength() > 1? "Way" : "Point"));
 							}
-							TagValuePair pair = obj.getMapIndex().decodeType(types[j]);
-							if(pair == null) {
-								System.err.println("Type " + types[j] + "was not found");
-								continue;
-//								throw new NullPointerException("Type " + obj.getAdditionalTypes()[j] + "was not found");
-							}
-							b.append(pair.toSimpleString()+" ("+types[j]+")");
-						}
-						b.append("]");
-						if(obj.getAdditionalTypes() != null && obj.getAdditionalTypes().length > 0){
-							b.append(" add_types [");
-							for(int j = 0; j<obj.getAdditionalTypes().length; j++){
+							int[] types = obj.getTypes();
+							b.append(" types [");
+							for(int j = 0; j<types.length; j++){
 								if(j > 0) {
 									b.append(", ");
 								}
-								TagValuePair pair = obj.getMapIndex().decodeType(obj.getAdditionalTypes()[j]);
+								TagValuePair pair = obj.getMapIndex().decodeType(types[j]);
 								if(pair == null) {
-									System.err.println("Type " + obj.getAdditionalTypes()[j] + "was not found");
+									System.err.println("Type " + types[j] + "was not found");
 									continue;
-//									throw new NullPointerException("Type " + obj.getAdditionalTypes()[j] + "was not found");
+	//								throw new NullPointerException("Type " + obj.getAdditionalTypes()[j] + "was not found");
 								}
-								b.append(pair.toSimpleString()+"("+obj.getAdditionalTypes()[j]+")");
-								
+								b.append(pair.toSimpleString()+" ("+types[j]+")");
 							}
 							b.append("]");
-						}
-						TIntObjectHashMap<String> names = obj.getObjectNames();
-						if(names != null && !names.isEmpty()) {
-							b.append(" Names [");
-							int[] keys = names.keys();
-							for(int j = 0; j<keys.length; j++){
-								if(j > 0) {
-									b.append(", ");
+							if(obj.getAdditionalTypes() != null && obj.getAdditionalTypes().length > 0){
+								b.append(" add_types [");
+								for(int j = 0; j<obj.getAdditionalTypes().length; j++){
+									if(j > 0) {
+										b.append(", ");
+									}
+									TagValuePair pair = obj.getMapIndex().decodeType(obj.getAdditionalTypes()[j]);
+									if(pair == null) {
+										System.err.println("Type " + obj.getAdditionalTypes()[j] + "was not found");
+										continue;
+	//									throw new NullPointerException("Type " + obj.getAdditionalTypes()[j] + "was not found");
+									}
+									b.append(pair.toSimpleString()+"("+obj.getAdditionalTypes()[j]+")");
+									
 								}
-								TagValuePair pair = obj.getMapIndex().decodeType(keys[j]);
-								if(pair == null) {
-									throw new NullPointerException("Type " + keys[j] + "was not found");
-								}
-								b.append(pair.toSimpleString()+"("+keys[j]+")");
-								b.append(" - ").append(names.get(keys[j]));
+								b.append("]");
 							}
-							b.append("]");
+							TIntObjectHashMap<String> names = obj.getObjectNames();
+							if(names != null && !names.isEmpty()) {
+								b.append(" Names [");
+								int[] keys = names.keys();
+								for(int j = 0; j<keys.length; j++){
+									if(j > 0) {
+										b.append(", ");
+									}
+									TagValuePair pair = obj.getMapIndex().decodeType(keys[j]);
+									if(pair == null) {
+										throw new NullPointerException("Type " + keys[j] + "was not found");
+									}
+									b.append(pair.toSimpleString()+"("+keys[j]+")");
+									b.append(" - ").append(names.get(keys[j]));
+								}
+								b.append("]");
+							}
+							
+							b.append(" id ").append((obj.getId() >> 1));
+							b.append(" lat/lon : ");
+							for(int i=0; i<obj.getPointsLength(); i++) {
+								float x = (float) MapUtils.get31LongitudeX(obj.getPoint31XTile(i));
+								float y = (float) MapUtils.get31LatitudeY(obj.getPoint31YTile(i));
+								b.append(x).append(" / ").append(y).append(" , ");
+							}
+							println(b.toString());
 						}
-						
-						b.append(" id ").append((obj.getId() >> 1));
-						b.append(" lat/lon : ");
-						for(int i=0; i<obj.getPointsLength(); i++) {
-							float x = (float) MapUtils.get31LongitudeX(obj.getPoint31XTile(i));
-							float y = (float) MapUtils.get31LatitudeY(obj.getPoint31YTile(i));
-							b.append(x).append(" / ").append(y).append(" , ");
-						}
-						println(b.toString());
 						return false;
 					}
 					@Override
@@ -576,6 +588,7 @@ public class BinaryInspector {
 					}
 				});
 		index.searchMapIndex(req, mapIndex);
+		println("\tTotal map objects: " + mapObjectsCounter.value);
 	}
 	
 	private static void printPOIDetailInfo(VerboseInfo verbose, BinaryMapIndexReader index, PoiRegion p) throws IOException {
