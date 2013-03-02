@@ -50,41 +50,64 @@
 		<parameter id="weight" name="Weight" description="Weight" type="numeric" values="0,1500,3000" valueDescriptions="-,1.5t,3t"/>
 		
 		<way attribute="access">
-			<select value="no" t="highway" v="motorway">
+			<select value="-1" t="highway" v="motorway">
 				<if param="avoid_motorway"/>
 			</select>
-			<select value="no" t="highway" v="motorway_link">
+			<select value="-1" t="highway" v="motorway_link">
 				<if param="avoid_motorway"/>
 			</select>
-			<select value="no" t="toll" v="yes">
+			<select value="-1" t="toll" v="yes">
 				<if param="avoid_toll"/>
 			</select>
-			<select value="no" t="highway" v="track">
+			<select value="-1" t="route" v="ferry">
+				<if param="avoid_ferries"/>
+			</select>
+			<select value="-1" t="highway" v="track">
 				<if param="avoid_unpaved"/>
 			</select>
-			<select value="no" t="access" v="no"/>
-			<select value="no" t="motorcycle" v="no"/>
-			<select value="no" t="motorcar" v="no"/>
-			<select value="no" t="motor_vehicle" v="no"/>
-			<select value="no" t="vehicle" v="no"/>
-			<select value="no" t="barrier" v="debris"/>
-			<select value="no" t="barrier" v="block"/>
+			<select value="-1" t="access" v="no"/>
+			<select value="-1" t="motorcycle" v="no"/>
+			<select value="-1" t="motorcar" v="no"/>
+			<select value="-1" t="motor_vehicle" v="no"/>
+			<select value="-1" t="vehicle" v="no"/>
+			<select value="-1" t="barrier" v="debris"/>
+			<select value="-1" t="barrier" v="block"/>
 			
-			<select value="no" t="maxweight">
+			<select value="-1" t="maxweight">
 				<gt value1=":weight" value2="$maxweight"/>
 			</select>
-			<select value="yes"/>
+			
+			<select value="1" t="highway" v="motorway"/>
+			<select value="1" t="highway" v="motorway_link"/>
+			<select value="1" t="highway" v="trunk"/>
+			<select value="1" t="highway" v="trunk_link"/>
+			<select value="1" t="highway" v="primary"/>
+			<select value="1" t="highway" v="primary_link"/>
+			<select value="1" t="highway" v="secondary"/>
+			<select value="1" t="highway" v="secondary_link"/>
+			<select value="1" t="highway" v="tertiary"/>
+			<select value="1" t="highway" v="tertiary_link"/>
+			<select value="1" t="highway" v="unclassified"/>
+			<select value="1" t="highway" v="road"/>
+			<select value="1" t="highway" v="residential"/>
+			<select value="1" t="highway" v="track"/>
+			<select value="1" t="highway" v="service"/>
+			<select value="1" t="highway" v="living_street"/>
+			<select value="1" t="route" v="ferry"/>
+			<select value="-1"/>
 		</way>
 		
 		<way attribute="oneway">
 			<select value="1" t="oneway" v="yes"/>
 			<select value="-1" t="oneway" v="reverse"/>
-			<select value="$oneway" t="oneway"/>
+			<select value="1" t="oneway" v="1"/>
+			<select value="1" t="oneway" v="+1"/>
+			<select value="-1" t="oneway" v="-1"/>
 		</way>
 		
 		
 		<way attribute="speed">
-			<if param="short_way">
+			<ifnot param="short_way">
 				<select value="$maxspeed" t="maxspeed"/>
 				<select value="110" t="highway" v="motorway"/>
 				<select value="110" t="highway" v="motorway_link"/>
@@ -106,7 +129,7 @@
 				<select value="35" t="highway" v="residential"/>
 				
 				<select value="15" t="highway" v="track"/>
-			</if>
+			</ifnot>
 			
 			<select value="30" t="highway" v="service"/>
 			<select value="25" t="highway" v="living_street"/>
@@ -117,7 +140,7 @@
 			</if>
 		</way>
 		
-			<way attribute="priority">
+		<way attribute="priority">
 			<select value="1.4" t="highway" v="motorway">
 				<if param="prefer_motorway"/>
 			</select>
