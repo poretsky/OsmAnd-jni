@@ -17,8 +17,11 @@ import net.osmand.util.Algorithms;
 
 public class EntityParser {
 	
-	public static void parseMapObject(MapObject mo, Entity e) {
+	private static void parseMapObject(MapObject mo, Entity e) {
 		mo.setId(e.getId());
+		if(mo instanceof Amenity) {
+			mo.setId((e.getId() << 1) + ((e instanceof Node) ? 0 : 1));
+		}
 		if (mo.getName().length() == 0) {
 			mo.setName(e.getTag(OSMTagKey.NAME));
 		}
@@ -61,7 +64,7 @@ public class EntityParser {
 	
 	public static void parseAmenity(Amenity am, Entity entity) {
 		parseMapObject(am, entity);
-		am.setId((entity.getId() << 1) + ((entity instanceof Node) ? 0 : 1));
+		
 	}
 
 	public static Amenity parseAmenity(Entity entity, AmenityType type, String subtype) {

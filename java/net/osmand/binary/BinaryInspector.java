@@ -52,7 +52,7 @@ public class BinaryInspector {
 		// test cases show info
 		
 		
-//		inspector(new String[]{"-vpoi", /*"-bbox=11.3,47.05,11.4,47", */"/home/victor/projects/OsmAnd/data/osm-gen/Map.obf"});
+		//inspector(new String[]{"-vpoi", /*"-bbox=11.3,47.05,11.4,47", */"/home/victor/projects/OsmAnd/data/osm-gen/Map.obf"});
 		// test case extract parts
 		// test case 
 	}
@@ -607,7 +607,7 @@ public class BinaryInspector {
 				new ResultMatcher<Amenity>() {
 					@Override
 					public boolean publish(Amenity object) {
-						println(object.getType().toString() + " : " + object.getSubType() + " " + object.getEnName() + " " + object.getLocation());
+						println(object.getType().toString() + " : " + object.getSubType() + " " + object.getEnName() + " " + object.getLocation() + " id=" + (object.getId() >> 1));
 						return false;
 					}
 					@Override

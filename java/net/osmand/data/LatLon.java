@@ -1,5 +1,7 @@
 package net.osmand.data;
 
+import sun.util.logging.resources.logging;
+
 public class LatLon {
 	private final double longitude;
 	private final double latitude;
@@ -39,7 +41,7 @@ public class LatLon {
 
 	@Override
 	public String toString() {
-		return "Lat " + latitude + " Lon " + longitude; //$NON-NLS-1$ //$NON-NLS-2$
+		return "Lat " + ((float)latitude) + " Lon " + ((float)longitude); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public double getLatitude() {
