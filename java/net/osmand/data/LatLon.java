@@ -1,6 +1,5 @@
 package net.osmand.data;
 
-import sun.util.logging.resources.logging;
 
 public class LatLon {
 	private final double longitude;
