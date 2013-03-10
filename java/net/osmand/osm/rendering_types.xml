@@ -81,9 +81,22 @@
 	</category>
 	
 	<category name="routes">
-		<type tag="route" value="ferry" minzoom="8" relation="true" namePrefix="route_"/>
-		<type tag="route" value="hiking" minzoom="8" relation="true" namePrefix="route_"/>
+		<type tag="ferry_route" value="ferry" nameTags="ref" namePrefix="ferry_route_" relation="true"/>
+		<type tag="route" value="ferry" target_tag="ferry_route" target_value="ferry" minzoom="8" relation="true"/>
+		<type tag="hiking_route" value="hiking" nameTags="ref,name" namePrefix="hiking_route_" relation="true"/>
+		<type tag="route" value="hiking" target_tag="hiking_route" target_value="hiking" minzoom="8" relation="true"/>
 		
+		<type tag="iwn_network" value="iwn" nameTags="ref,name" namePrefix="iwn_" relation="true"/>
+		<type tag="network" value="iwn" target_tag="iwn_network" target_value="iwn" minzoom="8" relation="true"/>
+		<type tag="nwn_network" value="nwn" nameTags="ref,name" namePrefix="nwn_" relation="true"/>
+		<type tag="network" value="nwn" target_tag="nwn_network" target_value="nwn" minzoom="8" relation="true"/>
+		<type tag="rwn_network" value="rwn" nameTags="ref,name" namePrefix="rwn_" relation="true"/>
+		<type tag="network" value="rwn" target_tag="rwn_network" target_value="rwn" minzoom="8" relation="true"/>
+		<type tag="lwn_network" value="lwn" nameTags="ref,name" namePrefix="lwn_" relation="true"/>
+		<type tag="network" value="lwn" target_tag="lwn_network" target_value="lwn" minzoom="8" relation="true"/>
+		
+		<type tag="icn_network" value="icn" nameTags="ref" namePrefix="icn_" minzoom="8" relation="true"/>
+		<type tag="network" value="icn" target_tag="icn_network" target_value="icn" minzoom="8" relation="true"/>
 		<type tag="lcn_network" value="lcn" nameTags="ref" namePrefix="lcn_" minzoom="8" relation="true"/>
 		<type tag="network" value="lcn" target_tag="lcn_network" target_value="lcn" minzoom="8" relation="true"/>
 		<type tag="ncn_network" value="ncn" nameTags="ref" namePrefix="ncn_" minzoom="8" relation="true"/>
