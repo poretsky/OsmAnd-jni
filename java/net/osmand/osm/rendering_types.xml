@@ -524,6 +524,7 @@
 		<type tag="natural" value="sand" minzoom="11" />
 		<type tag="natural" value="scree" minzoom="11" />
 		<type tag="natural" value="scrub" minzoom="11" />
+		<type tag="natural" value="grassland" minzoom="11" />
 		<type tag="natural" value="spring" minzoom="14" />
 		<type tag="natural" value="stone" minzoom="15" />
 		<type tag="natural" value="tree" minzoom="15" poi_category="" />

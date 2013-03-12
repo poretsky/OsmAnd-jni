@@ -139,7 +139,7 @@
 		tree2, viewpoint, vineyard, windmill, zoo, dentist, veterinary, doctors, optician, bureau_de_change, vending_machine, kiosk, outdoor, wreck, wyside_shrine,
 		wayside_cross, ruins, monument, battlefield, water_park, video, horse_racing, stadium, kindergarten, theme_par, baseball, archery, golf, swimming, diving, scuba_diving,
 		canoe, skiing, soccer, tennis, greengrocer, mobile_phone, motorcycle, electronics, fishing, barrier_block, tobacco, townhall, barrier_kissing, barrier_toll,
-		laundry, copyshop 
+		laundry, copyshop, grassland
 	-->
 
 
@@ -981,6 +981,7 @@
 		<!-- Open nature, night color 004333 -->
 		<group>
 			<filter minzoom="12" color="#ffffc0" tag="natural" value="heath"/>
+			<filter minzoom="12" color="#cfeca8" tag="natural" value="grassland"/>
 			<filter minzoom="12" color="#f6e3c7" tag="landuse" value="farm"/>
 			 <!-- field is unofficial -->
 			 <filter minzoom="12" color="#f6e3c7" tag="landuse" value="field"/>
