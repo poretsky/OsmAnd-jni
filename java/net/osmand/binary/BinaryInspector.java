@@ -79,7 +79,7 @@ public class BinaryInspector {
 		double latbottom = -85;
 		double lonleft = -180;
 		double lonright = 180;
-		int zoom = 15;
+		int zoom = -1;
 		
 		public boolean isVaddress() {
 			return vaddress;
@@ -501,7 +501,7 @@ public class BinaryInspector {
 				MapUtils.get31TileNumberX(verbose.lonright),
 				MapUtils.get31TileNumberY(verbose.lattop),
 				MapUtils.get31TileNumberY(verbose.latbottom),
-				-1,//verbose.getZoom(),
+				verbose.getZoom(),
 				new SearchFilter() {
 					@Override
 					public boolean accept(TIntArrayList types, MapIndex index) {
@@ -597,7 +597,7 @@ public class BinaryInspector {
 				MapUtils.get31TileNumberX(verbose.lonright),
 				MapUtils.get31TileNumberY(verbose.lattop),
 				MapUtils.get31TileNumberY(verbose.latbottom),
-				-1,//verbose.getZoom(),
+				verbose.getZoom(),
 				new SearchPoiTypeFilter() {
 					@Override
 					public boolean accept(AmenityType type, String subcategory) {
