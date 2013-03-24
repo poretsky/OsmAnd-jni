@@ -736,10 +736,10 @@ public class RouteCalculationResult {
 	}
 	
 	public AlarmInfo getMostImportantAlarm(Location fromLoc, AlarmInfo speedAlarm, boolean showCameras) {
-		int aInfo = currentDirectionInfo;
 		int cRoute = currentRoute;
 		AlarmInfo mostImportant = speedAlarm;
 		int value = speedAlarm != null? speedAlarm.updateDistanceAndGetPriority(0, 0) : Integer.MAX_VALUE;
+		int aInfo = nextAlarmInfo;
 		if (aInfo < alarmInfo.size()) {
 			int dist = 0;
 			float speed = 0;
