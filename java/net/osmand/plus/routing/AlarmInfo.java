@@ -85,14 +85,14 @@ public class AlarmInfo {
 			return 0;
 		}
 		// 1 level of priorities
-		if((time > 0 && time < 12) || distance < 150 || type == SPEED_LIMIT) {
+		if(time < 12 || distance < 150 || type == SPEED_LIMIT) {
 			return type;
 		}
 		if(type == SPEED_CAMERA && (time < 20 || distance < 250)) {
 			return type;
 		}
 		// 2nd level
-		if((time > 0 && time < 18) || distance < 300 ) {
+		if(time < 15 || distance < 300 ) {
 			return type + MAXIMUM;
 		}
 		return 0;
