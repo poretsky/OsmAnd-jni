@@ -20,8 +20,6 @@
 		type="boolean" possibleValues=""/>
 	<renderingProperty attr="showRoadMaps" name="Roads-only maps" description="Select how to show maps that have only road information"
 		type="string" possibleValues="Always - never show regular maps,Where no regular map is available,Never"/>
-	<renderingProperty attr="showCycleRoutes" name="Show cycle routes" description="Show bicycle routes (bicycle mode)"
-		   type="boolean" possibleValues=""/>
 
 	<renderingAttribute name="defaultColor">
 		<filter noPolygons="true" attrColorValue="#00ffffff"/>
@@ -277,11 +275,6 @@
 			<filter tag="natural" value="coastline_broken" order="35"/>
 			<filter tag="natural" value="coastline_line" order="35"/>
 			<filter tag="ferry_route" value="ferry" order="35"/>
-			
-			
-			<filter appMode="bicycle" showCycleRoutes="true" tag="lcn_network" value="lcn" order="110"/>
-      		<filter appMode="bicycle" showCycleRoutes="true" tag="rcn_network" value="rcn" order="111"/>
-      		<filter appMode="bicycle" showCycleRoutes="true" tag="ncn_network" value="ncn" order="112"/>
 			
 			<filter tag="aeroway" value="" order="32"/>
 			<filter tag="contour" value="" order="15"/>
@@ -679,19 +672,6 @@
 		<filter minzoom="15" textSize="12" textColor="#000033" textHaloRadius="1" textWrapWidth="30" tag="tourism" value="theme_park"/>
 		<filter minzoom="17" textSize="12" textColor="#734a08" textHaloRadius="1" textDy="7" tag="tourism" value="museum"/>
 
-    	 <group>
-		   <filter appMode="bicycle" showCycleRoutes="true" tag="lcn_network" value="lcn" nameTag="lcn_ref" textColor="#0000ff" textOrder="22"/>
-	       <filter appMode="bicycle" showCycleRoutes="true" tag="rcn_network" value="rcn" nameTag="rcn_ref" textColor="#ff00ff" textOrder="21"/>
-	       <filter appMode="bicycle" showCycleRoutes="true" tag="ncn_network" value="ncn" nameTag="ncn_ref" textColor="#ff4000" textOrder="20"/>
-	      <groupFilter appMode="bicycle" textOnPath="true" >
-		        <filter minzoom="13" maxzoom="13" textDy="-11" textHaloRadius="1" textSize="10"/>
-		        <filter minzoom="14" maxzoom="14" textDy="-12" textHaloRadius="1" textSize="11"/>
-		        <filter minzoom="15" maxzoom="15" textDy="-14" textHaloRadius="1" textSize="13"/>
-		        <filter minzoom="16" maxzoom="16" textDy="-16" textHaloRadius="1" textSize="15"/>
-		        <filter minzoom="17" maxzoom="17" textDy="-20" textHaloRadius="1" textSize="18"/>
-		        <filter minzoom="18" textDy="-25" textHaloRadius="1" textSize="21"/>
-	      </groupFilter>
-	    </group>
 		<!-- type not supported -->
 		<!-- <filter minzoom="16" textSize="13" textWrapWidth="10" tag="landuse" type="point"/> -->
 	</text>
@@ -1598,20 +1578,6 @@
 		<filter noAdminboundaries="false" tag="admin_level" value="10" minzoom="13" color="#2A800080" strokeWidth="3" pathEffect="4_1"/>
 
 		<filter noAdminboundaries="false" tag="boundary" value="national_park" minzoom="7" maxzoom="9" color="#a009dd09" strokeWidth="1.5" pathEffect="4_1"/>
-		<filter noAdminboundaries="false" tag="boundary" value="national_park" minzoom="10" color="#a009dd09" strokeWidth="3" pathEffect="4_1"/>
-		
-		<group>
-	      <filter appMode="bicycle" showCycleRoutes="true" tag="lcn_network" value="lcn" color="#400000ff"/>
-	      <filter appMode="bicycle" showCycleRoutes="true" tag="rcn_network" value="rcn" color="#40ff00ff"/>
-	      <filter appMode="bicycle" showCycleRoutes="true" tag="ncn_network" value="ncn" color="#40ff4000"/>
-	      <groupFilter cap="BUTT">
-	        <filter minzoom="13" maxzoom="13" strokeWidth="9"/>
-	        <filter minzoom="14" maxzoom="14" strokeWidth="10"/>
-	        <filter minzoom="15" maxzoom="15" strokeWidth="12"/>
-	        <filter minzoom="16" maxzoom="16" strokeWidth="15"/>
-	        <filter minzoom="17" maxzoom="17" strokeWidth="19"/>
-	        <filter minzoom="18" strokeWidth="25"/>
-	      </groupFilter>
-	    </group>
+			<filter noAdminboundaries="false" tag="boundary" value="national_park" minzoom="10" color="#a009dd09" strokeWidth="3" pathEffect="4_1"/>
 	</line>
 </renderingStyle>
