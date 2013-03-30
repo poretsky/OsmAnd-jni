@@ -636,7 +636,7 @@ public class OsmandSettings {
 	public final CommonPreference<DayNightMode> DAYNIGHT_MODE = 
 		new EnumIntPreference<DayNightMode>("daynight_mode", DayNightMode.DAY, DayNightMode.values());
 	{
-		DAYNIGHT_MODE.makeProfile();
+		DAYNIGHT_MODE.makeProfile().cache();
 		DAYNIGHT_MODE.setModeDefaultValue(ApplicationMode.CAR, DayNightMode.AUTO);
 		DAYNIGHT_MODE.setModeDefaultValue(ApplicationMode.BICYCLE, DayNightMode.AUTO);
 		DAYNIGHT_MODE.setModeDefaultValue(ApplicationMode.PEDESTRIAN, DayNightMode.DAY);
