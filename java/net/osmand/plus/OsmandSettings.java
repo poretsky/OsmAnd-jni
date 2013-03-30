@@ -9,12 +9,14 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import net.osmand.IndexConstants;
+import net.osmand.StateChangedListener;
 import net.osmand.data.LatLon;
 import net.osmand.map.ITileSource;
 import net.osmand.map.TileSourceManager;
@@ -29,21 +31,7 @@ import net.osmand.render.RenderingRulesStorage;
 
 public class OsmandSettings {
 	
-	/**
-	 * Exposes method to override default value of the preference
-	 * @author Alexey Pelykh
-	 *
-	 * @param <T> Type of preference value
-	 */
-	protected interface OsmandPreferenceWithOverridableDefault<T> {
-		/**
-		 * Overrides default value with given
-		 * @param newDefaultValue New default value
-		 */
-		void overrideDefaultValue(T newDefaultValue);
-	}
-	
-	public interface OsmandPreference<T> extends OsmandPreferenceWithOverridableDefault<T> {
+	public interface OsmandPreference<T>  {
 		T get();
 		
 		boolean set(T obj);
@@ -55,6 +43,41 @@ public class OsmandSettings {
 		String getId();
 		
 		void resetToDefault();
+		
+		void overrideDefaultValue(T newDefaultValue);
+		
+		void addListener(StateChangedListener<T> listener);
+		
+		void removeListener(StateChangedListener<T> listener);
+	}
+	
+	private abstract class PreferenceWithListener<T> implements OsmandPreference<T> {
+		private List<StateChangedListener<T>> l = null;
+		
+		@Override
+		public void addListener(StateChangedListener<T> listener) {
+			if(l == null) {
+				l = new LinkedList<StateChangedListener<T>>();
+			}
+			if(!l.contains(listener)) {
+				l.add(listener);
+			}
+		}
+
+		public void fireEvent(T value){
+			if (l != null) {
+				for (StateChangedListener<T> t : l) {
+					t.stateChanged(value);
+				}
+			}
+		}
+		
+		@Override
+		public void removeListener(StateChangedListener<T> listener) {
+			if(l != null) {
+				l.remove(listener);
+			}
+		}
 	}
 	
 	// These settings are stored in SharedPreferences
@@ -112,7 +135,7 @@ public class OsmandSettings {
 	}
 	
 	// this value string is synchronized with settings_pref.xml preference name
-	public final OsmandPreference<ApplicationMode> APPLICATION_MODE = new OsmandPreference<ApplicationMode>(){
+	public final OsmandPreference<ApplicationMode> APPLICATION_MODE = new PreferenceWithListener<ApplicationMode>(){
 		@Override
 		public String getId() {
 			return "application_mode";
@@ -140,7 +163,7 @@ public class OsmandSettings {
 			if(changed){
 				currentMode = val;
 				profilePreferences = getProfilePreferences(currentMode);
-				switchApplicationMode(oldMode);
+				fireEvent(oldMode);
 			}
 			return changed;
 		}
@@ -169,19 +192,6 @@ public class OsmandSettings {
 		}
 	}
 
-	protected void switchApplicationMode(ApplicationMode oldMode){
-		// update vector renderer 
-		RendererRegistry registry = ctx.getRendererRegistry();
-		RenderingRulesStorage newRenderer = registry.getRenderer(RENDERER.get());
-		if (newRenderer == null) {
-			newRenderer = registry.defaultRender();
-		}
-		if(registry.getCurrentSelectedRenderer() != newRenderer){
-			registry.setCurrentSelectedRender(newRenderer);
-			ctx.getTodoAPI().forceMapRendering();
-		}
-	}
-	
 
 	// Check internet connection available every 15 seconds
 	public boolean isInternetConnectionAvailable(){
@@ -198,7 +208,7 @@ public class OsmandSettings {
 	
 	/////////////// PREFERENCES classes ////////////////
 	
-	public abstract class CommonPreference<T> implements OsmandPreference<T> {
+	public abstract class CommonPreference<T> extends PreferenceWithListener<T> {
 		private final String id;
 		private boolean global;
 		private T cachedValue;
@@ -244,7 +254,9 @@ public class OsmandSettings {
 			if(global) {
 				return set(obj);
 			}
-			return setValue(getProfilePreferences(mode), obj);
+			boolean ch = setValue(getProfilePreferences(mode), obj);
+			fireEvent(obj);
+			return ch;
 		}
 		
 		public T getProfileDefaultValue(){
@@ -315,9 +327,10 @@ public class OsmandSettings {
 		@Override
 		public boolean set(T obj) {
 			Object prefs = getPreferences();
-			if(setValue(prefs,obj)){
+			if (setValue(prefs, obj)) {
 				cachedValue = obj;
 				cachedPreference = prefs;
+				fireEvent(obj);
 				return true;
 			}
 			return false;
@@ -547,8 +560,8 @@ public class OsmandSettings {
 	// this value string is synchronized with settings_pref.xml preference name
 	public final CommonPreference<Boolean> USE_INTERNET_TO_DOWNLOAD_TILES = new BooleanPreference("use_internet_to_download_tiles", true).makeGlobal().cache();
 	
-	public final OsmandPreference<ApplicationMode> PREV_APPLICATION_MODE = new EnumIntPreference<ApplicationMode>(
-			"prev_application_mode", ApplicationMode.DEFAULT, ApplicationMode.values()).makeGlobal();
+	public final OsmandPreference<ApplicationMode> DEFAULT_APPLICATION_MODE = new EnumIntPreference<ApplicationMode>(
+			"default_application_mode", ApplicationMode.DEFAULT, ApplicationMode.values()).makeGlobal();
 	
 	// this value string is synchronized with settings_pref.xml preference name
 	// cache of metrics constants as they are used very often
@@ -621,13 +634,7 @@ public class OsmandSettings {
 	
 	// this value string is synchronized with settings_pref.xml preference name
 	public final CommonPreference<DayNightMode> DAYNIGHT_MODE = 
-		new EnumIntPreference<DayNightMode>("daynight_mode", DayNightMode.DAY, DayNightMode.values()) {
-		@Override
-		protected boolean setValue(Object prefs, DayNightMode val) {
-			ctx.getTodoAPI().setDayNightMode(val);
-			return super.setValue(prefs, val);
-		}
-	};
+		new EnumIntPreference<DayNightMode>("daynight_mode", DayNightMode.DAY, DayNightMode.values());
 	{
 		DAYNIGHT_MODE.makeProfile();
 		DAYNIGHT_MODE.setModeDefaultValue(ApplicationMode.CAR, DayNightMode.AUTO);

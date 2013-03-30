@@ -185,6 +185,12 @@ public class RoutingHelper {
 		return listeners.remove(l);
 	}
 	
+	public void updateLocation(Location currentLocation) {
+		if(isFollowingMode()) {
+			setCurrentLocation(currentLocation, false);
+		}
+	}
+	
 	
 	public Location setCurrentLocation(Location currentLocation, boolean returnUpdatedLocation ) {
 		Location locationProjection = currentLocation;
@@ -360,7 +366,7 @@ public class RoutingHelper {
 			TargetPointsHelper targets = app.getInternalAPI().getTargetPointsHelper();
 			int toDel = targets.getIntermediatePoints().size() - route.getIntermediatePointsToPass();
 			while(toDel > 0) {
-				targets.removeWayPoint(null, false, 0);
+				targets.removeWayPoint(false, 0);
 				toDel--;
 			}
 			while(intermediatePoints != null  && route.getIntermediatePointsToPass() < intermediatePoints.size()) {
@@ -375,7 +381,7 @@ public class RoutingHelper {
 			voiceRouter.arrivedDestinationPoint();
 			clearCurrentRoute(null, null);
 			TargetPointsHelper targets = app.getInternalAPI().getTargetPointsHelper();
-			targets.clearPointToNavigate(null, false);
+			targets.clearPointToNavigate(false);
 			return true;
 		}
 		return false;

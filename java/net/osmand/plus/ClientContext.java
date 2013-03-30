@@ -2,6 +2,7 @@ package net.osmand.plus;
 
 import java.io.File;
 
+import net.osmand.Location;
 import net.osmand.plus.api.ExternalServiceAPI;
 import net.osmand.plus.api.InternalOsmAndAPI;
 import net.osmand.plus.api.InternalToDoAPI;
@@ -19,6 +20,8 @@ public interface ClientContext {
 	public String getString(int resId, Object... args);
 	
 	public File getAppPath(String extend);
+	
+	public void showShortToastMessage(int msgId, Object... args);
 	
 	public void showToastMessage(int msgId, Object... args);
 	
@@ -45,4 +48,7 @@ public interface ClientContext {
 	public void runInUIThread(Runnable run, long delay);
 	
 	public RoutingHelper getRoutingHelper();
+	
+	public Location getLastKnownLocation();
+
 }

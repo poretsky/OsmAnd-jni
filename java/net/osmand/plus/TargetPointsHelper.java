@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.osmand.Location;
+import net.osmand.StateChangedListener;
 import net.osmand.data.LatLon;
 import net.osmand.plus.routing.RoutingHelper;
 
@@ -15,10 +16,13 @@ public class TargetPointsHelper {
 	private LatLon pointToNavigate = null;
 	private OsmandSettings settings;
 	private RoutingHelper routingHelper;
+	private ClientContext ctx;
+	private List<StateChangedListener<Void>> listeners = new ArrayList<StateChangedListener<Void>>();
 	
-	public TargetPointsHelper(OsmandSettings settings, RoutingHelper routingHelper){
-		this.settings = settings;
-		this.routingHelper = routingHelper;
+	public TargetPointsHelper(ClientContext ctx){
+		this.ctx = ctx;
+		this.settings = ctx.getSettings();
+		this.routingHelper = ctx.getRoutingHelper();
 		readFromSettings(settings);
 	}
 
@@ -74,28 +78,28 @@ public class TargetPointsHelper {
 	/**
 	 * Clear the local and persistent waypoints list and destination.
 	 */
-	public void removeAllWayPoints(MapScreen map, boolean updateRoute){
+	public void removeAllWayPoints(boolean updateRoute){
 		settings.clearPointToNavigate();
 		pointToNavigate = null;		
 		settings.clearIntermediatePoints();
 		settings.clearPointToNavigate(); 
 		intermediatePoints.clear();
 		intermediatePointNames.clear();	
-		updateRouteAndReferesh(map, updateRoute);
+		updateRouteAndReferesh(updateRoute);
 	}
 
 	/**
 	 * Move an intermediate waypoint to the destination.
 	 */
-	public void makeWayPointDestination(MapScreen map, boolean updateRoute, int index){
+	public void makeWayPointDestination(boolean updateRoute, int index){
 		pointToNavigate = intermediatePoints.remove(index);
 		settings.setPointToNavigate(pointToNavigate.getLatitude(), pointToNavigate.getLongitude(), 
 				intermediatePointNames.remove(index));		
 		settings.deleteIntermediatePoint(index);
-		updateRouteAndReferesh(map, updateRoute);
+		updateRouteAndReferesh(updateRoute);
 	}
 
-	public void removeWayPoint(MapScreen map, boolean updateRoute, int index){
+	public void removeWayPoint(boolean updateRoute, int index){
 		if(index < 0){
 			settings.clearPointToNavigate();
 			pointToNavigate = null;
@@ -111,31 +115,39 @@ public class TargetPointsHelper {
 			intermediatePoints.remove(index);
 			intermediatePointNames.remove(index);	
 		}
-		updateRouteAndReferesh(map, updateRoute);
+		updateRouteAndReferesh(updateRoute);
 	}
 
-	private void updateRouteAndReferesh(MapScreen map, boolean updateRoute) {
+	private void updateRouteAndReferesh(boolean updateRoute) {
 		if(updateRoute && ( routingHelper.isRouteBeingCalculated() || routingHelper.isRouteCalculated() ||
 				routingHelper.isFollowingMode())) {
-			Location lastKnownLocation = map == null ? routingHelper.getLastProjection() :  map.getLastKnownLocation();
+			Location lastKnownLocation = ctx.getLastKnownLocation();
 			routingHelper.setFinalAndCurrentLocation(settings.getPointToNavigate(),
 					settings.getIntermediatePoints(), lastKnownLocation, routingHelper.getCurrentGPXRoute());
 		}
-		if(map != null) {
-			map.refreshMap();
-		}
+		updateListeners();
+	}
+	
+	public void addListener(StateChangedListener<Void> l) {
+		listeners.add(l);
 	}
 	
 	
-	public void clearPointToNavigate(MapScreen map, boolean updateRoute) {
+	private void updateListeners() {
+		for(StateChangedListener<Void> l : listeners) {
+			l.stateChanged(null);
+		}
+	}
+
+	public void clearPointToNavigate(boolean updateRoute) {
 		settings.clearPointToNavigate();
 		settings.clearIntermediatePoints();
 		readFromSettings(settings);
-		updateRouteAndReferesh(map, updateRoute);
+		updateRouteAndReferesh(updateRoute);
 	}
 	
 	
-	public void reorderAllTargetPoints(MapScreen map, List<LatLon> point, 
+	public void reorderAllTargetPoints(List<LatLon> point, 
 			List<String> names, boolean updateRoute){
 		settings.clearPointToNavigate();
 		if (point.size() > 0) {
@@ -147,10 +159,10 @@ public class TargetPointsHelper {
 			settings.clearIntermediatePoints();
 		}
 		readFromSettings(settings);
-		updateRouteAndReferesh(map, updateRoute);
+		updateRouteAndReferesh(updateRoute);
 	}
 	
-	public void navigateToPoint(MapScreen map, LatLon point, boolean updateRoute, int intermediate){
+	public void navigateToPoint(LatLon point, boolean updateRoute, int intermediate){
 		if(point != null){
 			if(intermediate < 0) {
 				settings.setPointToNavigate(point.getLatitude(), point.getLongitude(), null);
@@ -163,7 +175,7 @@ public class TargetPointsHelper {
 			settings.clearIntermediatePoints();
 		}
 		readFromSettings(settings);
-		updateRouteAndReferesh(map, updateRoute);
+		updateRouteAndReferesh(updateRoute);
 		
 	}
 	
@@ -174,6 +186,8 @@ public class TargetPointsHelper {
 		}
     	return true;
     }
+	
+	
 
 	public void updatePointsFromSettings() {
 		readFromSettings(settings);		

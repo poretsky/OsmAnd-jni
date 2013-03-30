@@ -84,6 +84,9 @@ public class RouteProvider {
 			points.add(0, startPoint);
 		}
 		
+		public List<Location> getPoints() {
+			return points;
+		}
 		
 		public Location getStartPointForRoute(){
 			if(!points.isEmpty()){
