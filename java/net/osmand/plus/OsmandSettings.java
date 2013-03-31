@@ -677,7 +677,7 @@ public class OsmandSettings {
 		OPTIMAL_ROUTE_MODE.setModeDefaultValue(ApplicationMode.PEDESTRIAN, false);
 	}
 	
-	public final OsmandPreference<Boolean> SHOW_SPEED_LIMITS = new BooleanPreference("show_speed_limits", true).makeProfile().cache();
+	public final OsmandPreference<Boolean> SHOW_TRAFFIC_WARNINGS = new BooleanPreference("show_traffic_warnings", true).makeProfile().cache();
 	public final OsmandPreference<Boolean> SHOW_CAMERAS = new BooleanPreference("show_cameras", true).makeProfile().cache();
 	public final OsmandPreference<Boolean> SHOW_LANES = new BooleanPreference("show_lanes", true).makeProfile().cache();
 

@@ -8,6 +8,8 @@ import java.util.List;
 import net.osmand.Location;
 import net.osmand.PlatformUtil;
 import net.osmand.binary.RouteDataObject;
+import net.osmand.binary.BinaryMapRouteReaderAdapter.RouteRegion;
+import net.osmand.binary.BinaryMapRouteReaderAdapter.RouteTypeRule;
 import net.osmand.data.LatLon;
 import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.GPXUtilities.GPXFile;
@@ -533,12 +535,43 @@ public class RoutingHelper {
 	
 	public synchronized AlarmInfo getMostImportantAlarm(MetricsConstants mc, boolean showCameras){
 		float mxspeed = route.getCurrentMaxSpeed();
+		AlarmInfo speedAlarm = createSpeedAlarm(mc, mxspeed, lastProjection);
+		return route.getMostImportantAlarm(lastProjection, speedAlarm, showCameras);
+	}
+	
+	public static AlarmInfo calculateMostImportantAlarm(RouteDataObject ro, Location loc, 
+			MetricsConstants mc, boolean showCameras) {
+		float mxspeed = ro.getMaximumSpeed();
+		AlarmInfo speedAlarm = createSpeedAlarm(mc, mxspeed, loc);
+		if (speedAlarm != null) {
+			return speedAlarm;
+		}
+		for (int i = 0; i < ro.getPointsLength(); i++) {
+			int[] pointTypes = ro.getPointTypes(i);
+			RouteRegion reg = ro.region;
+			if (pointTypes != null) {
+				for (int r = 0; r < pointTypes.length; r++) {
+					RouteTypeRule typeRule = reg.quickGetEncodingRule(pointTypes[r]);
+					AlarmInfo info = AlarmInfo.createAlarmInfo(typeRule, 0);
+					if (info != null) {
+						if (info.getType() != AlarmInfo.SPEED_CAMERA || showCameras) {
+							return info;
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+
+	private static AlarmInfo createSpeedAlarm(MetricsConstants mc, float mxspeed, Location loc) {
 		AlarmInfo speedAlarm = null;
-		if(mxspeed != 0 && lastProjection != null && lastProjection.hasSpeed() && mxspeed != RouteDataObject.NONE_MAX_SPEED) {
-			float delta = 5f/3.6f; 
-			if(lastProjection.getSpeed() > mxspeed + delta) {
+		if (mxspeed != 0 && loc != null && loc.hasSpeed() && mxspeed != RouteDataObject.NONE_MAX_SPEED) {
+			float delta = 5f / 3.6f;
+			if (loc.getSpeed() > mxspeed + delta) {
 				int speed;
-				if(mc == MetricsConstants.KILOMETERS_AND_METERS) {
+				if (mc == MetricsConstants.KILOMETERS_AND_METERS) {
 					speed = Math.round(mxspeed * 3.6f);
 				} else {
 					speed = Math.round(mxspeed * 3.6f / 1.6f);
@@ -546,7 +579,7 @@ public class RoutingHelper {
 				speedAlarm = AlarmInfo.createSpeedLimit(speed);
 			}
 		}
-		return route.getMostImportantAlarm(lastProjection, speedAlarm, showCameras);
+		return speedAlarm;
 	}
 	
 	public static String formatStreetName(String name, String ref) {
