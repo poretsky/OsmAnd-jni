@@ -134,4 +134,17 @@ public class Building extends MapObject {
 		return name;
 	}
 
+	public LatLon getLocation(float interpolation) {
+		LatLon loc = getLocation();
+		LatLon latLon2 = getLatLon2();
+		if (latLon2 != null) {
+			double lat1 = loc.getLatitude();
+			double lat2 = latLon2.getLatitude();
+			double lon1 = loc.getLongitude();
+			double lon2 = latLon2.getLongitude();
+			return new LatLon(interpolation * (lat2 - lat1) + lat1, interpolation * (lon2 - lon1) + lon1);
+		}
+		return loc;
+	}
+
 }

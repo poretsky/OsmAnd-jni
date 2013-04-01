@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.lang.ref.Reference;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +21,7 @@ import java.util.Set;
 
 import net.osmand.ResultMatcher;
 import net.osmand.binary.BinaryMapAddressReaderAdapter.AddressRegion;
+import net.osmand.binary.BinaryMapAddressReaderAdapter.CitiesBlock;
 import net.osmand.binary.BinaryMapIndexReader.MapIndex;
 import net.osmand.binary.BinaryMapIndexReader.MapRoot;
 import net.osmand.binary.BinaryMapIndexReader.SearchFilter;
@@ -51,8 +51,7 @@ public class BinaryInspector {
 		inspector(args);
 		// test cases show info
 		
-		
-		//inspector(new String[]{"-vpoi", /*"-bbox=11.3,47.05,11.4,47", */"/home/victor/projects/OsmAnd/data/osm-gen/Map.obf"});
+//		inspector(new String[]{"-vpoi", /*"-bbox=11.3,47.05,11.4,47", */"/home/victor/projects/OsmAnd/data/osm-gen/Map.obf"});
 		// test case extract parts
 		// test case 
 	}
@@ -412,8 +411,14 @@ public class BinaryInspector {
 					}
 				} else if(p instanceof PoiRegion && (verbose != null && verbose.isVpoi())){
 					printPOIDetailInfo(verbose, index, (PoiRegion) p);
-				} else if (p instanceof AddressRegion && (verbose != null && verbose.isVaddress())) {
-					printAddressDetailedInfo(verbose, index, (AddressRegion)p);
+				} else if (p instanceof AddressRegion) {
+					List<CitiesBlock> cities = ((AddressRegion) p).cities;
+					for (CitiesBlock c : cities) {
+						println("\t" + i + "." + c.type + " Address part size=" + c.length + " bytes");
+					}
+					if (verbose != null && verbose.isVaddress()) {
+						printAddressDetailedInfo(verbose, index, (AddressRegion) p);
+					}
 				}
 				i++;
 			}
