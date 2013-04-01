@@ -376,6 +376,8 @@ public class BinaryMapAddressReaderAdapter {
 	protected Building readBuilding(int fileOffset, int street24X, int street24Y) throws IOException{
 		int x = 0;
 		int y = 0;
+		int x2 = 0;
+		int y2 = 0;
 		Building b = new Building();
 		b.setFileOffset(fileOffset);
 		while(true){
@@ -384,6 +386,9 @@ public class BinaryMapAddressReaderAdapter {
 			switch (tag) {
 			case 0:
 				b.setLocation(MapUtils.getLatitudeFromTile(24, y), MapUtils.getLongitudeFromTile(24, x));
+				if(x2 != 0 && y2 != 0) {
+					b.setLatLon2(new LatLon(MapUtils.getLatitudeFromTile(24, y2), MapUtils.getLongitudeFromTile(24, x2)));
+				}
 				if(b.getEnName().length() == 0){
 					b.setEnName(Junidecode.unidecode(b.getName()));
 				}
@@ -391,6 +396,7 @@ public class BinaryMapAddressReaderAdapter {
 			case OsmandOdb.BuildingIndex.ID_FIELD_NUMBER :
 				b.setId(codedIS.readUInt64());
 				break;
+				
 			case OsmandOdb.BuildingIndex.NAME_EN_FIELD_NUMBER :
 				b.setEnName(codedIS.readString());
 				break;
@@ -415,8 +421,14 @@ public class BinaryMapAddressReaderAdapter {
 			case OsmandOdb.BuildingIndex.X_FIELD_NUMBER :
 				x =  codedIS.readSInt32() + street24X;
 				break;
+			case OsmandOdb.BuildingIndex.X2_FIELD_NUMBER :
+				x2 =  codedIS.readSInt32() + street24X;
+				break;
 			case OsmandOdb.BuildingIndex.Y_FIELD_NUMBER :
 				y =  codedIS.readSInt32() + street24Y;
+				break;
+			case OsmandOdb.BuildingIndex.Y2_FIELD_NUMBER :
+				y2 =  codedIS.readSInt32() + street24y;
 				break;
 			case OsmandOdb.BuildingIndex.POSTCODE_FIELD_NUMBER :
 				b.setPostcode(codedIS.readString());
