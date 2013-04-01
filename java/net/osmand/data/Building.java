@@ -108,12 +108,6 @@ public class Building extends MapObject {
 				return -1;
 			}
 			if(numT > numB){
-				if(getInterpolationType() == BuildingInterpolation.EVEN || getInterpolationType() == BuildingInterpolation.ODD){
-					return ((float)num - numB) / (((float)numT - numB)*2f);
-				}
-				if (getInterpolationInterval() > 0) {
-					return ((float) num - numB) / (((float) numT - numB) * getInterpolationInterval());
-				}
 				return ((float)num - numB) / (((float)numT - numB));
 			}
 			return 0;
