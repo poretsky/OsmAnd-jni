@@ -428,7 +428,7 @@ public class BinaryMapAddressReaderAdapter {
 				y =  codedIS.readSInt32() + street24Y;
 				break;
 			case OsmandOdb.BuildingIndex.Y2_FIELD_NUMBER :
-				y2 =  codedIS.readSInt32() + street24y;
+				y2 =  codedIS.readSInt32() + street24Y;
 				break;
 			case OsmandOdb.BuildingIndex.POSTCODE_FIELD_NUMBER :
 				b.setPostcode(codedIS.readString());
