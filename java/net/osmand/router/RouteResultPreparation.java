@@ -479,13 +479,14 @@ public class RouteResultPreparation {
 				speak = true;
 			}
 //		}
-		
+
+		double devation = Math.abs(MapUtils.degreesDiff(prevSegm.getBearingEnd(), currentSegm.getBearingBegin()));
 		if (kl) {
-			t = TurnType.valueOf(TurnType.KL, leftSide);
+			t = TurnType.valueOf(devation > 5 ? TurnType.TSLL : TurnType.KL, leftSide);
 			t.setSkipToSpeak(!speak);
 		} 
-		if(kr){
-			t = TurnType.valueOf(TurnType.KR, leftSide);
+		if (kr) {
+			t = TurnType.valueOf(devation > 5 ? TurnType.TSLR : TurnType.KR, leftSide);
 			t.setSkipToSpeak(!speak);
 		}
 		if (t != null && lanes != null) {
