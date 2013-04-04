@@ -582,8 +582,13 @@ public class RoutingHelper {
 		return speedAlarm;
 	}
 	
-	public static String formatStreetName(String name, String ref) {
-		if(name != null && name.length() > 0){
+	public static String formatStreetName(String name, String ref, String destination) {
+		if(destination != null && destination.length() > 0){
+			if(ref != null && ref.length() > 0) {
+				destination = ref + " " + destination;
+			}
+			return destination;
+		} else if(name != null && name.length() > 0){
 			if(ref != null && ref.length() > 0) {
 				name = ref + " " + name;
 			}
@@ -598,13 +603,15 @@ public class RoutingHelper {
 		if((n.imminent == 0 || n.imminent == 1) && (n.directionInfo != null)) {
 			String nm = n.directionInfo.getStreetName();
 			String rf = n.directionInfo.getRef();
-			return formatStreetName(nm, rf);
+			String dn = n.directionInfo.getDestinationName();
+			return formatStreetName(nm, rf, dn);
 		}
 		RouteSegmentResult rs = route.getCurrentSegmentResult();
 		if(rs != null) {
 			String nm = rs.getObject().getName();
 			String rf = rs.getObject().getRef();
-			return formatStreetName(nm, rf);
+			String dn = rs.getObject().getDestinationName();
+			return formatStreetName(nm, rf, dn);
 		}
 		return null;
 	}

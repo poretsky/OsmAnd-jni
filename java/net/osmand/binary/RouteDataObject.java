@@ -67,6 +67,13 @@ public class RouteDataObject {
 		return null;
 	}
 
+	public String getDestinationName(){
+		if(names != null ) {
+			return names.get(region.destinationTypeRule);
+		}
+		return null;
+	}
+	
 	public int getPoint31XTile(int i) {
 		return pointsX[i];
 	}
