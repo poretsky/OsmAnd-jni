@@ -819,14 +819,8 @@ public class OsmandSettings {
 		return internetAvailableSourceTemplates;
 	}
 	
-	private CommonPreference<String> PREVIOUS_INSTALLED_VERSION;
+	public CommonPreference<String> PREVIOUS_INSTALLED_VERSION = new StringPreference("previous_installed_version", "").makeGlobal();
 
-	public CommonPreference<String> previousInstalledVesrion() {
-		if (PREVIOUS_INSTALLED_VERSION == null) {
-			PREVIOUS_INSTALLED_VERSION = new StringPreference("previous_installed_version", Version.getAppVersion(ctx)).makeGlobal();
-		}
-		return PREVIOUS_INSTALLED_VERSION;
-	}
 
 	public ITileSource getMapTileSource(boolean warnWhenSelected) {
 		String tileName = MAP_TILE_SOURCES.get();

@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -51,7 +50,7 @@ public class BinaryInspector {
 		inspector(args);
 		// test cases show info
 		
-//		inspector(new String[]{"-vpoi", /*"-bbox=11.3,47.05,11.4,47", */"/home/victor/projects/OsmAnd/data/osm-gen/Map.obf"});
+//		inspector(new String[]{"-vaddress", "-vcities", "-vstreets", "-bbox=14.4,50.1,14.5,50.01", "/home/victor/projects/OsmAnd/data/osm-gen/Map.obf"});
 		// test case extract parts
 		// test case 
 	}
@@ -66,6 +65,7 @@ public class BinaryInspector {
 	
 	protected static class VerboseInfo {
 		boolean vaddress;
+		boolean vcities;
 		boolean vstreetgroups;
 		boolean vstreets;
 		boolean vbuildings;
@@ -107,6 +107,8 @@ public class BinaryInspector {
 					vstreets = true;
 				} else if(params[i].equals("-vstreetgroups")){
 					vstreetgroups = true;
+				} else if(params[i].equals("-vcities")){
+					vcities = true;
 				} else if(params[i].equals("-vbuildings")){
 					vbuildings = true;
 				} else if(params[i].equals("-vintersections")){
@@ -448,27 +450,34 @@ public class BinaryInspector {
 			final List<City> cities = index.getCities(region, null, type);
 			
 			print(MessageFormat.format("\t{0}, {1,number,#} group(s)", new Object[]{cityType_String[j], Integer.valueOf(cities.size())}));
-			if(!verbose.vstreetgroups)
-	        {
+			if (BinaryMapAddressReaderAdapter.CITY_TOWN_TYPE == type) {
+				if (!verbose.vstreetgroups && !verbose.vcities) {
+					println("");
+					continue;
+				}
+			} else if (!verbose.vstreetgroups) {
 				println("");
-	            continue;
-	        }
+				continue;
+			}
 			println(":");
 			
 			for (City c : cities) {				
-				index.preloadStreets(c, null);
-				final Collection<Street> streets = c.getStreets();
-				print(MessageFormat.format("\t\t''{0}'' [{1,number,#}], {2,number,#} street(s)", new Object[]{c.getEnName(), Long.valueOf(c.getId()), Integer.valueOf(streets.size())}));
+				int size = index.preloadStreets(c, null);
+				List<Street> streets = new ArrayList<Street>(c.getStreets());
+				print(MessageFormat.format("\t\t''{0}'' [{1,number,#}], {2,number,#} street(s) size {3,number,#} bytes",
+						new Object[]{c.getEnName(), Long.valueOf(c.getId()), Integer.valueOf(streets.size()), Integer.valueOf(size)}));
 				if(!verbose.vstreets)
 		        {
 					println("");
 		            continue;
 		        }
 				println(":");
+				if (!verbose.contains(c))
+					continue;
+				
 				for (Street t : streets) {
 					if (!verbose.contains(t))
 						continue;
-					
 					index.preloadBuildings(t, null);
 					final List<Building> buildings = t.getBuildings();
 					final List<Street> intersections = t.getIntersectedStreets();

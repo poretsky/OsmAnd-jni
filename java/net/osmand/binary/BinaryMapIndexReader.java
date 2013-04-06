@@ -550,13 +550,14 @@ public class BinaryMapIndexReader {
 		return cities;
 	}
 	
-	public void preloadStreets(City c, SearchRequest<Street> resultMatcher) throws IOException {
+	public int preloadStreets(City c, SearchRequest<Street> resultMatcher) throws IOException {
 		checkAddressIndex(c.getFileOffset());
 		codedIS.seek(c.getFileOffset());
 		int size = codedIS.readRawVarint32();
 		int old = codedIS.pushLimit(size);
 		addressAdapter.readCityStreets(resultMatcher, c);
 		codedIS.popLimit(old);
+		return size;
 	}
 	
 	private void checkAddressIndex(int offset){
