@@ -16,6 +16,15 @@ public class RouteDirectionInfo {
 	
 	private String streetName;
 	
+	private String destinationName;
+
+	public String getDestinationName() {
+		return destinationName;
+	}
+
+	public void setDestinationName(String destinationName) {
+		this.destinationName = destinationName;
+	}
 
 	// Constructor to verify average speed always > 0
 	public RouteDirectionInfo(float averageSpeed, TurnType turnType) {

@@ -126,6 +126,7 @@ public class RouteCalculationResult {
 								false));
 						info.setRef(toSplit.getRef());
 						info.setStreetName(toSplit.getStreetName());
+						info.setDestinationName(toSplit.getDestinationName());
 						info.routePointOffset = interLocations[currentIntermediate];
 						info.setDescriptionRoute(ctx.getString(R.string.route_head));//; //$NON-NLS-1$
 						localDirections.add(currentDirection, info);
@@ -212,6 +213,7 @@ public class RouteCalculationResult {
 					RouteSegmentResult next = list.get(routeInd);
 					info.setRef(next.getObject().getRef());
 					info.setStreetName(next.getObject().getName());
+					info.setDestinationName(next.getObject().getDestinationName());
 				}
 				
 				String description = toString(turn, ctx);
