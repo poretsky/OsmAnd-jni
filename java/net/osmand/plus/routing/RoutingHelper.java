@@ -536,7 +536,12 @@ public class RoutingHelper {
 	public synchronized AlarmInfo getMostImportantAlarm(MetricsConstants mc, boolean showCameras){
 		float mxspeed = route.getCurrentMaxSpeed();
 		AlarmInfo speedAlarm = createSpeedAlarm(mc, mxspeed, lastProjection);
-		return route.getMostImportantAlarm(lastProjection, speedAlarm, showCameras);
+		AlarmInfo alarm = route.getMostImportantAlarm(lastProjection, speedAlarm, showCameras);
+		if(alarm != null) {
+//			voiceRouter.announceAlarm(alarm);
+		}
+		return alarm;
+		
 	}
 	
 	public static AlarmInfo calculateMostImportantAlarm(RouteDataObject ro, Location loc, 
@@ -544,6 +549,7 @@ public class RoutingHelper {
 		float mxspeed = ro.getMaximumSpeed();
 		AlarmInfo speedAlarm = createSpeedAlarm(mc, mxspeed, loc);
 		if (speedAlarm != null) {
+//			voiceRouter.announceAlarm(speedAlarm);
 			return speedAlarm;
 		}
 		for (int i = 0; i < ro.getPointsLength(); i++) {
@@ -555,6 +561,7 @@ public class RoutingHelper {
 					AlarmInfo info = AlarmInfo.createAlarmInfo(typeRule, 0);
 					if (info != null) {
 						if (info.getType() != AlarmInfo.SPEED_CAMERA || showCameras) {
+//							voiceRouter.announceAlarm(info);
 							return info;
 						}
 					}

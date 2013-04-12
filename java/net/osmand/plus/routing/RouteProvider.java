@@ -440,6 +440,7 @@ public class RouteProvider {
 		List<RouteDirectionInfo> directions = null;
 		StringBuilder uri = new StringBuilder();
 		// possibly hide that API key because it is privacy of osmand
+		// A6421860EBB04234AB5EF2D049F2CD8F key is compromised
 		uri.append("http://routes.cloudmade.com/A6421860EBB04234AB5EF2D049F2CD8F/api/0.3/"); //$NON-NLS-1$
 		uri.append(params.start.getLatitude() + "").append(","); //$NON-NLS-1$ //$NON-NLS-2$
 		uri.append(params.start.getLongitude() + "").append(","); //$NON-NLS-1$ //$NON-NLS-2$
