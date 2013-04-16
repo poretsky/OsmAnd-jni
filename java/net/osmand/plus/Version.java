@@ -91,4 +91,8 @@ public class Version {
 		}
 		return v;
 	}
+
+	public static boolean isOldCoreVersion(ClientContext ctx) {
+		return ctx.getString(R.string.versionFeatures).contains("+oldCore");
+	}
 }
