@@ -95,26 +95,19 @@ public class OsmAndFormatter {
 		ApplicationMode am = settings.getApplicationMode();
 		float kmh = metersperseconds * 3.6f;
 		if (mc == MetricsConstants.KILOMETERS_AND_METERS) {
-			if (kmh >= 15 || (am == ApplicationMode.CAR)) {
+			if (kmh >= 10 || (am == ApplicationMode.CAR)) {
 				return ((int) Math.round(kmh)) + " " + ctx.getString(R.string.km_h);
 			}
 			int kmh10 = (int) (kmh * 10f);
-			if (kmh10 % 10 == 0) {
-				return (kmh10 / 10) + " " + ctx.getString(R.string.km_h);
-			} else {
-				return (kmh10 / 10f) + " " + ctx.getString(R.string.km_h);
-			}
+			// calculate 2.0 km/h instead of 2 km/h in order to not stress UI text lengh
+			return (kmh10 / 10f) + " " + ctx.getString(R.string.km_h);
 		} else {
 			float mph = kmh * METERS_IN_KILOMETER / METERS_IN_ONE_MILE;
 			if (mph >= 10) {
 				return ((int) Math.round(mph)) + " " + ctx.getString(R.string.mile_per_hour);
 			} else {
 				int mph10 = (int) (mph * 10f);
-				if(mph10 % 10 == 0) {
-					return (mph10 / 10) + " " + ctx.getString(R.string.mile_per_hour);
-				} else { 
-					return (mph10 / 10f) + " " + ctx.getString(R.string.mile_per_hour);
-				}
+				return (mph10 / 10f) + " " + ctx.getString(R.string.mile_per_hour);
 			}
 		}
 	}
