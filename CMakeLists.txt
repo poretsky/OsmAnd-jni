@@ -50,6 +50,10 @@ add_library(OsmAndJNI SHARED
 	${pd_sources}
 )
 
+add_dependencies(OsmAndJNI
+	OsmAndCore
+	OsmAndCoreUtils
+)
 target_link_libraries(OsmAndJNI LINK_PUBLIC
 	OsmAndCore
 	OsmAndCoreUtils
