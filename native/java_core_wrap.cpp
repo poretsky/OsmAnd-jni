@@ -237,7 +237,7 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #include <Inspector.h>
 #include <ObfReader.h>
 #include <ObfSection.h>
-#include <Utilities.h>
+#include <OsmAndUtilities.h>
 
 class ObfInspector {
 public:
