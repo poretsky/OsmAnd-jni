@@ -234,10 +234,12 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 
 #include <QFile>
 #include <QStringList>
-#include <Inspector.h>
-#include <ObfReader.h>
-#include <ObfSection.h>
-#include <OsmAndUtilities.h>
+
+#include <OsmAndCoreUtils/Inspector.h>
+
+#include <OsmAndCore/Data/ObfReader.h>
+#include <OsmAndCore/Data/ObfSection.h>
+#include <OsmAndCore/Utilities.h>
 
 class ObfInspector {
 public:
@@ -596,7 +598,7 @@ SWIGEXPORT jdouble JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_checkLatitude(JN
   (void)jenv;
   (void)jcls;
   arg1 = (double)jarg1; 
-  result = (double)OsmAnd::Utilities::checkLatitude(arg1);
+  result = (double)OsmAnd::Utilities::normalizeLatitude(arg1);
   jresult = (jdouble)result; 
   return jresult;
 }
@@ -610,7 +612,7 @@ SWIGEXPORT jdouble JNICALL Java_net_osmand_bridge_CoreOsmAndJNI_checkLongitude(J
   (void)jenv;
   (void)jcls;
   arg1 = (double)jarg1; 
-  result = (double)OsmAnd::Utilities::checkLongitude(arg1);
+  result = (double)OsmAnd::Utilities::normalizeLongitude(arg1);
   jresult = (jdouble)result; 
   return jresult;
 }
