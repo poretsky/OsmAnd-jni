@@ -1,5 +1,25 @@
 project(OsmAndJNI)
 
+set(target_specific_private_includes "")
+if(CMAKE_TARGET_OS STREQUAL "linux" OR CMAKE_TARGET_OS STREQUAL "darwin" OR CMAKE_TARGET_OS STREQUAL "windows")
+	set(target_specific_private_includes ${target_specific_private_includes}
+		"$ENV{JAVA_HOME}/include"
+	)
+endif()
+if(CMAKE_TARGET_OS STREQUAL "windows")
+	set(target_specific_private_includes ${target_specific_private_includes}
+		"$ENV{JAVA_HOME}/include/win32"
+	)
+elseif(CMAKE_TARGET_OS STREQUAL "darwin")
+	set(target_specific_private_includes ${target_specific_private_includes}
+		"$ENV{JAVA_HOME}/include/darwin"
+	)
+elseif(CMAKE_TARGET_OS STREQUAL "linux")
+	set(target_specific_private_includes ${target_specific_private_includes}
+		"$ENV{JAVA_HOME}/include/linux"
+	)
+endif()
+
 include_directories(AFTER SYSTEM
 	"${OSMAND_ROOT}/core/externals/protobuf/upstream.patched/src"
 	"${OSMAND_ROOT}/core/include"
