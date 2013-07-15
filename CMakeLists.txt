@@ -65,16 +65,32 @@ elseif(CMAKE_TARGET_OS STREQUAL "windows")
 endif()
 
 file(GLOB_RECURSE sources "native/*")
-add_library(OsmAndJNI SHARED
-	${sources}
-	${pd_sources}
-)
 
-add_dependencies(OsmAndJNI
-	OsmAndCore
-	OsmAndCoreUtils
-)
-target_link_libraries(OsmAndJNI LINK_PUBLIC
-	OsmAndCore
-	OsmAndCoreUtils
-)
+if(CMAKE_SHARED_LIBS_ALLOWED_ON_TARGET)
+	add_library(OsmAndJNI SHARED
+		${sources}
+		${pd_sources}
+	)
+
+	if(CMAKE_STATIC_LIBS_ALLOWED_ON_TARGET)
+		add_dependencies(OsmAndJNI
+			OsmAndCore_static
+			OsmAndCoreUtils_static
+		)
+		target_link_libraries(OsmAndJNI
+			LINK_PUBLIC
+				OsmAndCore_static
+				OsmAndCoreUtils_static
+		)
+	else()
+		add_dependencies(OsmAndJNI
+			OsmAndCore_shared
+			OsmAndCoreUtils_shared
+		)
+		target_link_libraries(OsmAndJNI
+			LINK_PUBLIC
+				OsmAndCore_shared
+				OsmAndCoreUtils_shared
+		)
+	endif()
+endif()
