@@ -1,2 +1,3 @@
-/*.jar
-/bin/
+# Exclude generated files
+/java
+/src
